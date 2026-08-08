@@ -1,3 +1,29 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&display=swap');
 
 @import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Lexend', sans-serif;
+}
+
+@source './app/**/*.html';
+@source './app/**/*.ts';
+
+
+/* Prevent Chrome/Safari autofill from overriding input background styles in dark mode */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0px 1000px #131926 inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Force global font-family */
+html, body, :host {
+  font-family: 'Lexend', sans-serif !important;
+}
+
+
+
