@@ -79,7 +79,7 @@ import Swal from 'sweetalert2';
                         <td class="py-4 px-6 text-right font-extrabold text-white">₹{{ bill.totalAmount | number:'1.2-2' }}</td>
                         <td class="py-4 px-6 text-center">
                           <span
-                            [class]="bill.paymentStatus === 'paid' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'"
+                            [class]="bill.paymentStatus === 'paid' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : (bill.paymentStatus === 'partially_paid' ? 'bg-orange-500/20 text-orange-400 border-orange-500/30' : 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30')"
                             class="inline-block text-[10px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider"
                           >
                             {{ bill.paymentStatus }}
@@ -164,6 +164,7 @@ import Swal from 'sweetalert2';
                 <table class="w-full text-left">
                   <thead>
                     <tr class="text-slate-400 text-xs font-semibold uppercase tracking-wider border-b border-white/10">
+                      <th class="py-2 px-4 text-center w-12">S.No.</th>
                       <th class="py-2 px-4">Item Name</th>
                       <th class="py-2 px-4 text-right">Unit Price</th>
                       <th class="py-2 px-4 text-center">Qty</th>
@@ -174,13 +175,14 @@ import Swal from 'sweetalert2';
                   <tbody>
                     @if (billItems().length === 0) {
                       <tr>
-                        <td colspan="5" class="py-8 text-center text-slate-500 text-sm">
+                        <td colspan="6" class="py-8 text-center text-slate-500 text-sm">
                           Please add rows or items using the button below.
                         </td>
                       </tr>
                     } @else {
                       @for (item of billItems(); track index; let index = $index) {
                         <tr class="border-b border-white/5">
+                          <td class="py-3 px-4 text-center text-slate-400 text-sm font-semibold">{{ index + 1 }}</td>
                           <!-- Product Selection Search Field -->
                           <td class="py-3 px-4 relative">
                             <input
@@ -302,6 +304,7 @@ import Swal from 'sweetalert2';
                     min="0"
                     [max]="calculateSubtotal()"
                     [(ngModel)]="billDiscount"
+                    (ngModelChange)="onDiscountChange()"
                     class="w-24 px-2 py-1 text-right bg-white/5 border border-white/10 rounded text-white text-xs focus:outline-none focus:border-orange-500"
                   />
                 </div>
@@ -383,10 +386,40 @@ import Swal from 'sweetalert2';
                       >
                         ⏳ Pending (Draft)
                       </button>
+                      <button
+                        type="button"
+                        (mousedown)="setPaymentStatus('partially_paid')"
+                        class="w-full text-left px-3 py-2 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all cursor-pointer block font-sans"
+                      >
+                        💵 Partially Paid
+                      </button>
                     </div>
                   }
                 </div>
               </div>
+
+              <!-- Partially Paid Input Fields -->
+              @if (paymentStatus === 'partially_paid') {
+                <div class="grid grid-cols-2 gap-4 pt-2">
+                  <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1 whitespace-nowrap">Paid Amount (₹)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      [max]="calculateTotal()"
+                      [(ngModel)]="billPaidAmount"
+                      (ngModelChange)="onPaidAmountChange()"
+                      class="w-full px-3 py-2.5 bg-slate-900 border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-orange-500"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1 whitespace-nowrap">Pending Amount (₹)</label>
+                    <div class="w-full px-3 py-2.5 bg-slate-900 border border-white/5 rounded-xl text-slate-400 text-xs font-mono select-none">
+                      ₹{{ billPendingAmount | number:'1.2-2' }}
+                    </div>
+                  </div>
+                </div>
+              }
             </div>
 
             @if (createError()) {
@@ -427,7 +460,7 @@ import Swal from 'sweetalert2';
                 </button>
                 <button
                   (click)="closeBillDetails()"
-                  class="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-semibold"
+                  class="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-semibold cursor-pointer"
                 >
                   Close
                 </button>
@@ -439,10 +472,13 @@ import Swal from 'sweetalert2';
               
               <!-- Business Details & Branding -->
               <div class="flex justify-between items-start">
-                <div>
-                  <h1 class="text-3xl font-black tracking-tight text-slate-900 uppercase">RKM CRACKERS</h1>
-                  <p class="text-xs text-slate-500 mt-1 font-bold">Sparkles of Joy, Safely Delivered</p>
-                  <p class="text-xs text-slate-400">Avudayanoor, Tenkasi, Tamil Nadu, India</p>
+                <div class="flex items-center gap-3">
+                  <img src="/rkm-badge.svg" alt="RKM Logo" class="w-12 h-12 object-contain" />
+                  <div>
+                    <h1 class="text-3xl font-black tracking-tight text-slate-900 uppercase">RKM CRACKERS</h1>
+                    <p class="text-xs text-slate-500 mt-1 font-bold">Sparkles of Joy, Safely Delivered</p>
+                    <p class="text-xs text-slate-400">Avudayanoor, Tenkasi, Tamil Nadu, India</p>
+                  </div>
                 </div>
                 <div class="text-right">
                   <span class="inline-block px-3 py-1 bg-slate-100 text-slate-800 text-[10px] font-bold rounded uppercase tracking-wider">
@@ -486,6 +522,7 @@ import Swal from 'sweetalert2';
               <table class="w-full text-left text-xs border-collapse">
                 <thead>
                   <tr class="bg-slate-50 text-slate-600 font-bold uppercase border-b border-slate-200">
+                    <th class="py-2.5 px-3 text-center w-12">S.No.</th>
                     <th class="py-2.5 px-3">Item Description</th>
                     <th class="py-2.5 px-3 text-right">Unit Price (₹)</th>
                     <th class="py-2.5 px-3 text-center">Quantity</th>
@@ -493,14 +530,22 @@ import Swal from 'sweetalert2';
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
-                  @for (item of selectedBill().items; track item.id) {
+                  @for (item of selectedBill().items; track item.id; let idx = $index) {
                     <tr class="text-slate-700">
+                      <td class="py-3 px-3 text-center text-slate-500 font-semibold">{{ idx + 1 }}</td>
                       <td class="py-3 px-3 font-semibold text-slate-800">{{ item.product?.name || 'Crackers Item' }}</td>
                       <td class="py-3 px-3 text-right">₹{{ item.unitPrice | number:'1.2-2' }}</td>
                       <td class="py-3 px-3 text-center">{{ item.quantity }}</td>
                       <td class="py-3 px-3 text-right font-bold text-slate-900">₹{{ item.totalAmount | number:'1.2-2' }}</td>
                     </tr>
                   }
+                  <!-- Total row at the end of items table body -->
+                  <tr class="font-extrabold border-t border-slate-200 text-slate-900 bg-slate-50">
+                    <td colspan="2" class="py-2.5 px-3">Total:</td>
+                    <td class="py-2.5 px-3"></td>
+                    <td class="py-2.5 px-3 text-center">{{ calculateSelectedBillTotalQty() }}</td>
+                    <td class="py-2.5 px-3 text-right">₹{{ selectedBill().subtotal | number:'1.2-2' }}</td>
+                  </tr>
                 </tbody>
               </table>
 
@@ -519,11 +564,113 @@ import Swal from 'sweetalert2';
                     <span>Grand Total:</span>
                     <span class="text-lg">₹{{ selectedBill().totalAmount | number:'1.2-2' }}</span>
                   </div>
+                  <div class="flex justify-between text-xs text-slate-500 font-semibold border-t border-dashed border-slate-100 pt-2">
+                    <span>Paid Amount:</span>
+                    <span class="text-emerald-700 font-bold">₹{{ (selectedBill().paidAmount || 0) | number:'1.2-2' }}</span>
+                  </div>
+                  @if (selectedBill().pendingAmount > 0) {
+                    <div class="flex justify-between text-xs text-slate-500 font-semibold">
+                      <span>Pending Balance:</span>
+                      <span class="text-red-700 font-bold">₹{{ selectedBill().pendingAmount | number:'1.2-2' }}</span>
+                    </div>
+                  }
                 </div>
               </div>
 
+              <!-- Payment Details, History, and Record Payment -->
+              <div class="border-t border-slate-100 pt-6 space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs bg-slate-50 p-4 rounded-xl">
+                  <div>
+                    <p class="text-slate-500 font-bold uppercase tracking-wide mb-2 text-[10px]">Payment Overview:</p>
+                    <p class="text-slate-700">Total Bill Amount: <strong class="text-slate-900">₹{{ selectedBill().totalAmount | number:'1.2-2' }}</strong></p>
+                    <p class="text-slate-700 mt-1">Paid Amount: <strong class="text-emerald-700">₹{{ (selectedBill().paidAmount || 0) | number:'1.2-2' }}</strong></p>
+                    <p class="text-slate-700 mt-1">Pending Amount: <strong class="text-red-700">₹{{ (selectedBill().pendingAmount || 0) | number:'1.2-2' }}</strong></p>
+                  </div>
+                  <div>
+                    <p class="text-slate-500 font-bold uppercase tracking-wide mb-2 text-[10px]">Status Details:</p>
+                    <p class="text-slate-700">Payment Status: 
+                      <span 
+                        [class]="selectedBill().paymentStatus === 'paid' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : (selectedBill().paymentStatus === 'partially_paid' ? 'bg-orange-100 text-orange-800 border-orange-200' : 'bg-yellow-100 text-yellow-800 border-yellow-200')"
+                        class="px-2 py-0.5 rounded border font-extrabold uppercase text-[10px]"
+                      >
+                        {{ selectedBill().paymentStatus }}
+                      </span>
+                    </p>
+                    <p class="text-slate-700 mt-1">Payment Method: <strong class="uppercase text-slate-800">{{ selectedBill().paymentMethod }}</strong></p>
+                  </div>
+                </div>
+
+                @if (selectedBill().payments && selectedBill().payments.length > 0) {
+                  <div class="space-y-2 text-xs">
+                    <p class="text-slate-500 font-bold uppercase tracking-wide text-[10px]">Payment Transactions History:</p>
+                    <div class="border border-slate-200 rounded-lg overflow-hidden bg-white">
+                      <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                          <tr class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200">
+                            <th class="py-1.5 px-3">Transaction Date</th>
+                            <th class="py-1.5 px-3">Method</th>
+                            <th class="py-1.5 px-3 text-right">Amount Received</th>
+                          </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                          @for (p of selectedBill().payments; track p.id) {
+                            <tr class="text-slate-700">
+                              <td class="py-1.5 px-3 text-slate-500">{{ p.paymentDate | date:'medium' }}</td>
+                              <td class="py-1.5 px-3 uppercase font-semibold text-slate-800">{{ p.paymentMethod }}</td>
+                              <td class="py-1.5 px-3 text-right font-bold text-slate-900">₹{{ p.amountPaid | number:'1.2-2' }}</td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                }
+
+                @if (selectedBill().pendingAmount > 0) {
+                  <div class="bg-orange-50/60 border border-orange-200/50 p-4 rounded-xl space-y-3 print:hidden">
+                    <div class="flex items-center gap-2">
+                      <span class="text-base">💸</span>
+                      <h4 class="text-xs font-extrabold text-orange-950 uppercase tracking-wider">Record Pending Balance Payment</h4>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+                      <div>
+                        <label class="block text-[10px] font-bold text-orange-800 uppercase tracking-wide mb-1">Amount to Pay (₹)</label>
+                        <input
+                          type="number"
+                          min="0.01"
+                          [max]="selectedBill().pendingAmount"
+                          [(ngModel)]="payBalanceAmount"
+                          class="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 text-xs font-semibold focus:outline-none focus:border-orange-500"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-[10px] font-bold text-orange-800 uppercase tracking-wide mb-1">Payment Method</label>
+                        <select
+                          [(ngModel)]="payBalanceMethod"
+                          class="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 text-xs font-semibold focus:outline-none focus:border-orange-500"
+                        >
+                          <option value="cash">💵 Cash</option>
+                          <option value="card">💳 Card</option>
+                          <option value="upi">📱 UPI</option>
+                        </select>
+                      </div>
+                      <div>
+                        <button
+                          (click)="submitBalancePayment()"
+                          [disabled]="!payBalanceAmount || payBalanceAmount <= 0 || payBalanceAmount > selectedBill().pendingAmount"
+                          class="w-full py-1.5 bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-bold text-xs rounded-lg transition-colors cursor-pointer"
+                        >
+                          Collect Payment
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+
               <!-- Footer notice -->
-              <div class="text-center text-[10px] text-slate-400 pt-8">
+              <div class="text-center text-[10px] text-slate-400 pt-3">
                 <p>Thank you for shopping with RKM Crackers! Have a safe and happy celebrations.</p>
                 <p class="mt-1">This is a system generated tax invoice. No signature required.</p>
               </div>
@@ -538,7 +685,7 @@ import Swal from 'sweetalert2';
   styles: [`
     @media print {
       /* Hide all dashboard structures, headers, sidebars, buttons, and tab switchers */
-      aside, header, nav, button, .inline-flex {
+      aside, header, nav, button, .inline-flex, select, input {
         display: none !important;
       }
       /* Hide parent dashboard views when modal is active */
@@ -572,7 +719,7 @@ import Swal from 'sweetalert2';
       /* Format invoice text & tables for high contrast print output */
       #invoicePrintArea {
         display: block !important;
-        padding: 40px !important;
+        padding: 20px !important;
         margin: 0 !important;
         background: white !important;
         color: #000000 !important;
@@ -609,10 +756,16 @@ export class BillsComponent implements OnInit {
   billDiscount = 0;
   paymentMethod = 'cash';
   paymentStatus = 'paid';
+  billPaidAmount = 0;
+  billPendingAmount = 0;
   createError = signal<string | null>(null);
 
   showMethodDropdown = signal(false);
   showStatusDropdown = signal(false);
+
+  // Pay Balance Form fields
+  payBalanceAmount = 0;
+  payBalanceMethod = 'cash';
 
   private showAlert(title: string, text: string, icon: 'success' | 'error' | 'warning' | 'info'): void {
     Swal.fire({
@@ -638,6 +791,7 @@ export class BillsComponent implements OnInit {
   getPaymentStatusLabel(val: string): string {
     if (val === 'paid') return '✅ Paid (Completed)';
     if (val === 'pending') return '⏳ Pending (Draft)';
+    if (val === 'partially_paid') return '💵 Partially Paid';
     return val;
   }
 
@@ -649,6 +803,17 @@ export class BillsComponent implements OnInit {
   setPaymentStatus(val: string): void {
     this.paymentStatus = val;
     this.showStatusDropdown.set(false);
+    const total = this.calculateTotal();
+    if (val === 'paid') {
+      this.billPaidAmount = total;
+      this.billPendingAmount = 0;
+    } else if (val === 'pending') {
+      this.billPaidAmount = 0;
+      this.billPendingAmount = total;
+    } else if (val === 'partially_paid') {
+      this.billPaidAmount = 0;
+      this.billPendingAmount = total;
+    }
   }
 
   hideMethodDropdownWithDelay(): void {
@@ -710,6 +875,7 @@ export class BillsComponent implements OnInit {
       showDropdown: false
     };
     this.billItems.set(items);
+    this.recalculatePartialAmounts();
   }
 
   onSearchInputChange(index: number): void {
@@ -722,6 +888,7 @@ export class BillsComponent implements OnInit {
       item.quantity = 1;
       item.maxStock = 0;
       this.billItems.set(items);
+      this.recalculatePartialAmounts();
     }
   }
 
@@ -759,6 +926,7 @@ export class BillsComponent implements OnInit {
 
     item.quantity = qty;
     this.billItems.set(items);
+    this.recalculatePartialAmounts();
   }
 
   onPhoneChange(phoneVal: string): void {
@@ -836,10 +1004,13 @@ export class BillsComponent implements OnInit {
       name: prod.name,
       unitPrice: prod.price,
       quantity: 1,
-      maxStock: prod.stockQuantity
+      maxStock: prod.stockQuantity,
+      searchText: prod.name,
+      showDropdown: false
     };
 
     this.billItems.update(items => [...items, newItem]);
+    this.recalculatePartialAmounts();
   }
 
   adjustQty(index: number, diff: number): void {
@@ -859,10 +1030,12 @@ export class BillsComponent implements OnInit {
 
     item.quantity = targetQty;
     this.billItems.set(items);
+    this.recalculatePartialAmounts();
   }
 
   removeBillItem(index: number): void {
     this.billItems.update(items => items.filter((_, i) => i !== index));
+    this.recalculatePartialAmounts();
   }
 
   calculateSubtotal(): number {
@@ -874,6 +1047,43 @@ export class BillsComponent implements OnInit {
     const discount = Number(this.billDiscount) || 0;
     const total = sub - discount;
     return total < 0 ? 0 : total;
+  }
+
+  onDiscountChange(): void {
+    this.recalculatePartialAmounts();
+  }
+
+  recalculatePartialAmounts(): void {
+    const total = this.calculateTotal();
+    if (this.paymentStatus === 'paid') {
+      this.billPaidAmount = total;
+      this.billPendingAmount = 0;
+    } else if (this.paymentStatus === 'pending') {
+      this.billPaidAmount = 0;
+      this.billPendingAmount = total;
+    } else if (this.paymentStatus === 'partially_paid') {
+      if (this.billPaidAmount > total) {
+        this.billPaidAmount = total;
+      }
+      this.billPendingAmount = total - this.billPaidAmount;
+    }
+  }
+
+  onPaidAmountChange(): void {
+    const total = this.calculateTotal();
+    if (this.billPaidAmount > total) {
+      this.billPaidAmount = total;
+    }
+    if (this.billPaidAmount < 0) {
+      this.billPaidAmount = 0;
+    }
+    this.billPendingAmount = total - this.billPaidAmount;
+  }
+
+  calculateSelectedBillTotalQty(): number {
+    const bill = this.selectedBill();
+    if (!bill || !bill.items) return 0;
+    return bill.items.reduce((acc: number, item: any) => acc + Number(item.quantity), 0);
   }
 
   submitBill(): void {
@@ -896,6 +1106,29 @@ export class BillsComponent implements OnInit {
       return;
     }
 
+    // Confirmation Popup
+    Swal.fire({
+      title: 'Generate Invoice?',
+      text: 'Are you sure you want to generate this invoice? Once generated, it cannot be edited.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Generate',
+      cancelButtonText: 'Cancel',
+      background: '#0f172a',
+      color: '#ffffff',
+      confirmButtonColor: '#f97316',
+      cancelButtonColor: '#475569',
+      customClass: {
+        popup: 'border border-white/10 rounded-2xl font-sans text-sm'
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.executeSubmitBill(discount, itemsToSend);
+      }
+    });
+  }
+
+  private executeSubmitBill(discount: number, itemsToSend: any[]): void {
     // Form payload
     const payload = {
       customer: {
@@ -908,6 +1141,8 @@ export class BillsComponent implements OnInit {
       discount: discount,
       paymentStatus: this.paymentStatus,
       paymentMethod: this.paymentMethod,
+      paidAmount: this.paymentStatus === 'partially_paid' ? this.billPaidAmount : undefined,
+      pendingAmount: this.paymentStatus === 'partially_paid' ? this.billPendingAmount : undefined,
       items: itemsToSend.map(item => ({
         productId: item.productId,
         quantity: item.quantity
@@ -923,13 +1158,17 @@ export class BillsComponent implements OnInit {
         this.billDiscount = 0;
         this.paymentMethod = 'cash';
         this.paymentStatus = 'paid';
+        this.billPaidAmount = 0;
+        this.billPendingAmount = 0;
 
         // Load new bill in preview modal
         this.selectedBill.set(savedBill);
+        this.payBalanceAmount = savedBill.pendingAmount;
         
         // Reload list history and product stocks
         this.loadBills();
         this.loadProductsCatalog();
+        this.showAlert('Success', 'Invoice generated successfully.', 'success');
       },
       error: (err) => {
         this.createError.set(err.error?.message || 'Error occurred while generating invoice. Please check stock limits.');
@@ -942,6 +1181,9 @@ export class BillsComponent implements OnInit {
     this.billService.getBill(id).subscribe({
       next: (res) => {
         this.selectedBill.set(res);
+        if (res) {
+          this.payBalanceAmount = res.pendingAmount;
+        }
       }
     });
   }
@@ -952,5 +1194,27 @@ export class BillsComponent implements OnInit {
 
   printInvoice(): void {
     window.print();
+  }
+
+  submitBalancePayment(): void {
+    const bill = this.selectedBill();
+    if (!bill) return;
+
+    const payload = {
+      amountPaid: Number(this.payBalanceAmount),
+      paymentMethod: this.payBalanceMethod
+    };
+
+    this.billService.addPayment(bill.id, payload).subscribe({
+      next: (updatedBill) => {
+        this.selectedBill.set(updatedBill);
+        this.payBalanceAmount = updatedBill.pendingAmount;
+        this.loadBills();
+        this.showAlert('Payment Recorded', `Success! Recorded payment of ₹${payload.amountPaid}`, 'success');
+      },
+      error: (err) => {
+        this.showAlert('Payment Error', err.error?.message || 'Error occurred while saving payment.', 'error');
+      }
+    });
   }
 }

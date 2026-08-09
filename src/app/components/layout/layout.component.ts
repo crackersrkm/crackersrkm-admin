@@ -25,8 +25,8 @@ import { AuthService } from '../../services/auth.service';
         <nav class="flex-1 space-y-2">
           <a
             routerLink="/products"
-            routerLinkActive="bg-white/10 text-white border-l-4 border-orange-500"
-            class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200"
+            routerLinkActive="bg-white/10 text-white border-orange-500"
+            class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-white/5 border-l-4 border-transparent rounded-lg transition-all duration-200"
           >
             <span>📦</span>
             <span class="font-semibold text-sm">Products</span>
@@ -34,8 +34,8 @@ import { AuthService } from '../../services/auth.service';
           
           <a
             routerLink="/bills"
-            routerLinkActive="bg-white/10 text-white border-l-4 border-orange-500"
-            class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200"
+            routerLinkActive="bg-white/10 text-white border-orange-500"
+            class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-white/5 border-l-4 border-transparent rounded-lg transition-all duration-200"
           >
             <span>🧾</span>
             <span class="font-semibold text-sm">Invoices & Billing</span>
@@ -43,8 +43,8 @@ import { AuthService } from '../../services/auth.service';
 
           <a
             routerLink="/reports"
-            routerLinkActive="bg-white/10 text-white border-l-4 border-orange-500"
-            class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200"
+            routerLinkActive="bg-white/10 text-white border-orange-500"
+            class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-white/5 border-l-4 border-transparent rounded-lg transition-all duration-200"
           >
             <span>📊</span>
             <span class="font-semibold text-sm">Reports</span>
@@ -55,7 +55,7 @@ import { AuthService } from '../../services/auth.service';
         @if (authService.currentUser(); as user) {
           <div class="p-4 bg-white/5 border border-white/5 rounded-xl flex items-center gap-3 relative overflow-hidden group">
             <div class="w-10 h-10 rounded-full bg-violet-600/30 border border-violet-500/40 flex items-center justify-center font-bold text-violet-300">
-              {{ user.firstName[0] }}{{ user.lastName[0] }}
+              {{ getInitials(user) }}
             </div>
             <div class="flex-1 min-w-0">
               <p class="text-sm font-semibold truncate">{{ user.name }}</p>
@@ -111,6 +111,19 @@ import { AuthService } from '../../services/auth.service';
 export class LayoutComponent {
   protected readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+
+  getInitials(user: any): string {
+    if (!user) return '';
+    const first = user.firstName ? user.firstName.charAt(0) : '';
+    const last = user.lastName ? user.lastName.charAt(0) : '';
+    if (!first && !last && user.name) {
+      const parts = user.name.split(' ');
+      const f = parts[0] ? parts[0].charAt(0) : '';
+      const l = parts[1] ? parts[1].charAt(0) : '';
+      return (f + l).toUpperCase();
+    }
+    return (first + last).toUpperCase();
+  }
 
   onLogout(): void {
     this.authService.logout();

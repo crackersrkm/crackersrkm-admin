@@ -32,4 +32,8 @@ export class BillService {
   public createBill(billData: any): Observable<any> {
     return this.http.post<any>(this.apiUrl, billData, { headers: this.getHeaders() });
   }
+
+  public addPayment(id: number, paymentData: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/${id}/payments`, paymentData, { headers: this.getHeaders() });
+  }
 }
