@@ -41,55 +41,55 @@ import Swal from 'sweetalert2';
 
       <!-- Tab Content: Invoice History -->
       @if (activeTab() === 'history') {
-        <div class="space-y-6">
-          <div class="bg-white/5 border border-white/5 rounded-2xl overflow-hidden shadow-xl">
+        <div class="space-y-4">
+          <div class="bg-white/5 border border-white/5 rounded-xl overflow-hidden shadow-xl">
             <div class="overflow-x-auto">
               <table class="w-full text-left border-collapse">
                 <thead>
-                  <tr class="border-b border-white/10 bg-white/5 text-slate-400 text-xs font-bold uppercase tracking-wider">
-                    <th class="py-4 px-6">Bill Number</th>
-                    <th class="py-4 px-6">Customer Name</th>
-                    <th class="py-4 px-6">Phone Number</th>
-                    <th class="py-4 px-6 text-center">Invoice Date</th>
-                    <th class="py-4 px-6 text-right">Total (₹)</th>
-                    <th class="py-4 px-6 text-center">Payment</th>
-                    <th class="py-4 px-6 text-center">Actions</th>
+                  <tr class="border-b border-white/10 bg-white/5 text-slate-400 text-[11px] font-bold uppercase tracking-wider">
+                    <th class="py-2.5 px-3.5">Bill Number</th>
+                    <th class="py-2.5 px-3.5">Customer Name</th>
+                    <th class="py-2.5 px-3.5">Phone Number</th>
+                    <th class="py-2.5 px-3.5 text-center">Invoice Date</th>
+                    <th class="py-2.5 px-3.5 text-right">Total (₹)</th>
+                    <th class="py-2.5 px-3.5 text-center">Payment</th>
+                    <th class="py-2.5 px-3.5 text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-white/5">
                   @if (loadingBills()) {
                     <tr>
-                      <td colspan="7" class="py-12 text-center text-slate-400">
-                        <div class="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                      <td colspan="7" class="py-8 text-center text-slate-400 text-xs">
+                        <div class="w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
                         Retrieving invoices list...
                       </td>
                     </tr>
                   } @else if (billsList().length === 0) {
                     <tr>
-                      <td colspan="7" class="py-12 text-center text-slate-400">
+                      <td colspan="7" class="py-8 text-center text-slate-400 text-xs">
                         No billing history found. Create a new bill to get started!
                       </td>
                     </tr>
                   } @else {
                     @for (bill of billsList(); track bill.id) {
-                      <tr class="hover:bg-white/5 transition-colors duration-150">
-                        <td class="py-4 px-6 font-mono text-xs text-orange-400 font-bold">{{ bill.billNumber }}</td>
-                        <td class="py-4 px-6 font-semibold text-white">{{ bill.customer?.name || 'N/A' }}</td>
-                        <td class="py-4 px-6 text-slate-400">{{ bill.customer?.phone || 'N/A' }}</td>
-                        <td class="py-4 px-6 text-center text-slate-300">{{ bill.billDate | date:'mediumDate' }}</td>
-                        <td class="py-4 px-6 text-right font-extrabold text-white">₹{{ bill.totalAmount | number:'1.2-2' }}</td>
-                        <td class="py-4 px-6 text-center">
+                      <tr class="hover:bg-white/[0.03] transition-colors duration-150">
+                        <td class="py-2 px-3.5 font-mono text-xs text-orange-400 font-bold">{{ bill.billNumber }}</td>
+                        <td class="py-2 px-3.5 font-semibold text-xs text-white">{{ bill.customer?.name || 'N/A' }}</td>
+                        <td class="py-2 px-3.5 text-xs text-slate-400">{{ bill.customer?.phone || 'N/A' }}</td>
+                        <td class="py-2 px-3.5 text-center text-xs text-slate-300">{{ bill.billDate | date:'mediumDate' }}</td>
+                        <td class="py-2 px-3.5 text-right font-mono font-extrabold text-xs text-white">₹{{ bill.totalAmount | number:'1.2-2' }}</td>
+                        <td class="py-2 px-3.5 text-center">
                           <span
                             [class]="bill.paymentStatus === 'paid' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : (bill.paymentStatus === 'partially_paid' ? 'bg-orange-500/20 text-orange-400 border-orange-500/30' : 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30')"
-                            class="inline-block text-[10px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider"
+                            class="inline-block text-[9px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-wider"
                           >
                             {{ bill.paymentStatus }}
                           </span>
                         </td>
-                        <td class="py-4 px-6 text-center">
+                        <td class="py-2 px-3.5 text-center">
                           <button
                             (click)="viewBillDetails(bill.id)"
-                            class="px-3 py-1.5 bg-white/5 hover:bg-orange-500 border border-white/10 hover:border-orange-500 rounded-lg text-xs font-semibold text-white transition-all cursor-pointer"
+                            class="px-2.5 py-1 bg-white/5 hover:bg-orange-500 border border-white/10 hover:border-orange-500 rounded text-xs font-semibold text-white transition-all cursor-pointer"
                           >
                             🔍 View
                           </button>
@@ -106,21 +106,21 @@ import Swal from 'sweetalert2';
 
       <!-- Tab Content: Create New Bill -->
       @if (activeTab() === 'create') {
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 items-start">
           
-          <!-- POS Creation Form -->
-          <div class="lg:col-span-2 space-y-6">
+          <!-- POS Creation Form (Left Panel 75%) -->
+          <div class="lg:col-span-3 space-y-3">
             
             <!-- Customer Card -->
-            <div class="bg-white/5 border border-white/5 rounded-2xl p-6 space-y-4">
-              <div class="flex items-center gap-2 border-b border-white/5 pb-3">
-                <span class="text-xl">👤</span>
-                <h3 class="text-lg font-bold text-white">Customer Details</h3>
+            <div class="bg-white/5 border border-white/5 rounded-xl p-3.5 space-y-2.5">
+              <div class="flex items-center gap-1.5 border-b border-white/5 pb-1.5">
+                <span class="text-base">👤</span>
+                <h3 class="text-sm font-bold text-white">Customer Details</h3>
               </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Customer Phone (10 digits)</label>
+                  <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Customer Phone (10 digits)</label>
                   <input
                     id="customer-phone"
                     type="text"
@@ -133,14 +133,14 @@ import Swal from 'sweetalert2';
                     #phoneRef="ngModel"
                     placeholder="9876543210"
                     [class.border-red-500]="phoneRef.invalid && phoneRef.touched"
-                    class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-orange-500"
+                    class="w-full px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-orange-500"
                   />
                   @if (phoneRef.invalid && phoneRef.touched) {
-                    <span class="text-[10px] text-red-400 mt-1 block">Must be a valid 10-digit number.</span>
+                    <span class="text-[10px] text-red-400 mt-0.5 block">Must be a valid 10-digit number.</span>
                   }
                 </div>
                 <div>
-                  <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Customer Name</label>
+                  <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Customer Name</label>
                   <input
                     id="customer-name"
                     type="text"
@@ -149,47 +149,55 @@ import Swal from 'sweetalert2';
                     (keydown.enter)="focusFirstItem($event)"
                     required
                     placeholder="John Doe"
-                    class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-orange-500"
+                    class="w-full px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-orange-500"
                   />
                 </div>
               </div>
             </div>
 
             <!-- Items Table Selection -->
-            <div class="bg-white/5 border border-white/5 rounded-2xl p-6 space-y-4 font-sans">
-              <div class="flex items-center justify-between border-b border-white/5 pb-3">
-                <div class="flex items-center gap-2">
-                  <span class="text-xl">🛍️</span>
-                  <h3 class="text-lg font-bold text-white">Invoice Items</h3>
+            <div class="bg-white/5 border border-white/5 rounded-xl p-3.5 space-y-2.5 font-sans">
+              <div class="flex items-center justify-between border-b border-white/5 pb-2">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-base">🛍️</span>
+                  <h3 class="text-sm font-bold text-white">Invoice Items</h3>
+                  <span class="text-xs text-slate-400 font-normal">({{ billItems().length }} rows)</span>
                 </div>
+                <button
+                  type="button"
+                  (click)="addBlankRow()"
+                  class="px-2.5 py-1 bg-orange-500/15 hover:bg-orange-500/25 border border-orange-500/30 rounded-lg text-xs font-semibold text-orange-400 hover:text-orange-300 transition-all flex items-center gap-1.5 cursor-pointer font-sans"
+                >
+                  <span>➕</span> Add Row
+                </button>
               </div>
 
               <!-- Bill items list table -->
-              <div class="overflow-x-auto min-h-[260px] pb-16">
+              <div class="overflow-x-auto max-h-[460px] overflow-y-auto">
                 <table class="w-full text-left">
-                  <thead>
-                    <tr class="text-slate-400 text-xs font-semibold uppercase tracking-wider border-b border-white/10">
-                      <th class="py-2 px-4 text-center w-12">S.No.</th>
-                      <th class="py-2 px-4">Item Name</th>
-                      <th class="py-2 px-4 text-right">Unit Price</th>
-                      <th class="py-2 px-4 text-center">Qty</th>
-                      <th class="py-2 px-4 text-right">Total</th>
-                      <th class="py-2 px-4 text-center">Action</th>
+                  <thead class="sticky top-0 bg-slate-900/95 backdrop-blur-sm z-10">
+                    <tr class="text-slate-400 text-[11px] font-semibold uppercase tracking-wider border-b border-white/10">
+                      <th class="py-2 px-2.5 text-center w-10">S.No.</th>
+                      <th class="py-2 px-2.5">Item (Name / ID)</th>
+                      <th class="py-2 px-2.5 text-right w-20">Unit Price</th>
+                      <th class="py-2 px-2.5 text-center w-24">Qty</th>
+                      <th class="py-2 px-2.5 text-right w-20">Total</th>
+                      <th class="py-2 px-2 text-center w-10">Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     @if (billItems().length === 0) {
                       <tr>
-                        <td colspan="6" class="py-8 text-center text-slate-500 text-sm">
-                          Please add rows or items using the button below.
+                        <td colspan="6" class="py-6 text-center text-slate-500 text-xs">
+                          No items added. Click "Add Row" above to start adding products.
                         </td>
                       </tr>
                     } @else {
                       @for (item of billItems(); track index; let index = $index) {
-                        <tr class="border-b border-white/5">
-                          <td class="py-3 px-4 text-center text-slate-400 text-sm font-semibold">{{ index + 1 }}</td>
+                        <tr class="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                          <td class="py-1.5 px-2.5 text-center text-slate-400 text-xs font-semibold">{{ index + 1 }}</td>
                           <!-- Product Selection Search Field -->
-                          <td class="py-3 px-4 relative">
+                          <td class="py-1.5 px-2.5 relative">
                             <input
                               [id]="'item-search-' + index"
                               type="text"
@@ -198,12 +206,12 @@ import Swal from 'sweetalert2';
                               (blur)="hideDropdownWithDelay(index)"
                               (input)="onSearchInputChange(index)"
                               (keydown.enter)="onSearchEnter(index, $event)"
-                              placeholder="Search & select product..."
-                              class="bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-orange-500 w-full max-w-[280px] font-sans"
+                              placeholder="Search ID or name..."
+                              class="bg-slate-900 border border-white/10 rounded-lg px-2.5 py-1 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-orange-500 w-full font-sans"
                             />
                             <!-- Custom dropdown overlay -->
                             @if (item.showDropdown) {
-                              <div class="absolute left-4 z-30 w-72 mt-1 max-h-[156px] overflow-y-auto bg-slate-900 border border-white/10 rounded-xl shadow-2xl p-2 space-y-1">
+                              <div class="absolute left-2.5 top-full z-50 w-72 mt-1 max-h-48 overflow-y-auto bg-slate-900 border border-white/10 rounded-xl shadow-2xl p-1.5 space-y-1">
                                 @if (getFilteredProducts(item).length === 0) {
                                   <div class="p-2 text-xs text-slate-500">No products found</div>
                                 } @else {
@@ -212,9 +220,12 @@ import Swal from 'sweetalert2';
                                       type="button"
                                       (mousedown)="selectProductFromRow(index, p)"
                                       [disabled]="p.stockQuantity <= 0"
-                                      class="w-full text-left px-3 py-2 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-slate-400 block cursor-pointer"
+                                      class="w-full text-left px-2.5 py-1.5 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-slate-400 block cursor-pointer"
                                     >
-                                      <div class="font-semibold">{{ p.name }}</div>
+                                      <div class="flex items-center justify-between gap-2">
+                                        <span class="font-semibold text-white truncate">{{ p.name }}</span>
+                                        <span class="text-[10px] font-mono font-bold bg-orange-500/20 text-orange-400 px-1.5 py-0.5 rounded shrink-0">#{{ p.id }}</span>
+                                      </div>
                                       <div class="text-[10px] text-slate-400 mt-0.5">₹{{ p.price }} | Stock: {{ p.stockQuantity }}</div>
                                     </button>
                                   }
@@ -222,16 +233,16 @@ import Swal from 'sweetalert2';
                               </div>
                             }
                           </td>
-                          <td class="py-3 px-4 text-right text-slate-300">₹{{ item.unitPrice | number:'1.2-2' }}</td>
+                          <td class="py-1.5 px-2.5 text-right text-xs text-slate-300 font-mono">₹{{ item.unitPrice | number:'1.2-2' }}</td>
                           
                           <!-- Interactive Quantity Adjusters -->
-                          <td class="py-3 px-4">
-                            <div class="flex items-center justify-center gap-2">
+                          <td class="py-1.5 px-2.5">
+                            <div class="flex items-center justify-center gap-1">
                               <button
                                 type="button"
                                 (click)="adjustQty(index, -1)"
                                 [disabled]="item.productId === 0"
-                                class="w-6 h-6 bg-white/5 rounded flex items-center justify-center border border-white/10 text-white font-bold hover:bg-white/10 disabled:opacity-30 cursor-pointer"
+                                class="w-5 h-5 bg-white/5 rounded flex items-center justify-center border border-white/10 text-white text-xs font-bold hover:bg-white/10 disabled:opacity-30 cursor-pointer"
                               >
                                 -
                               </button>
@@ -242,7 +253,7 @@ import Swal from 'sweetalert2';
                                 (change)="onRowQtyChange(index, item.quantity)"
                                 (keydown.enter)="onQtyEnter(index, $event)"
                                 [disabled]="item.productId === 0"
-                                class="font-mono text-sm w-12 text-center text-white bg-slate-950/40 border border-white/10 rounded py-0.5 focus:outline-none focus:border-orange-500"
+                                class="font-mono text-xs w-11 text-center text-white bg-slate-950/40 border border-white/10 rounded py-0.5 px-0.5 focus:outline-none focus:border-orange-500"
                                 min="1"
                                 [max]="item.maxStock"
                               />
@@ -250,22 +261,22 @@ import Swal from 'sweetalert2';
                                 type="button"
                                 (click)="adjustQty(index, 1)"
                                 [disabled]="item.productId === 0"
-                                class="w-6 h-6 bg-white/5 rounded flex items-center justify-center border border-white/10 text-white font-bold hover:bg-white/10 disabled:opacity-30 cursor-pointer"
+                                class="w-5 h-5 bg-white/5 rounded flex items-center justify-center border border-white/10 text-white text-xs font-bold hover:bg-white/10 disabled:opacity-30 cursor-pointer"
                               >
                                 +
                               </button>
                             </div>
                             @if (item.productId > 0) {
-                              <div class="text-[9px] text-center text-slate-500 mt-0.5">Max: {{ item.maxStock }}</div>
+                              <div class="text-[9px] text-center text-slate-500">Max: {{ item.maxStock }}</div>
                             }
                           </td>
 
-                          <td class="py-3 px-4 text-right font-bold text-slate-100">₹{{ (item.unitPrice * item.quantity) | number:'1.2-2' }}</td>
+                          <td class="py-1.5 px-2.5 text-right font-bold text-xs text-slate-100 font-mono">₹{{ (item.unitPrice * item.quantity) | number:'1.2-2' }}</td>
                           
-                          <td class="py-3 px-4 text-center">
+                          <td class="py-1.5 px-2 text-center">
                             <button
                               (click)="removeBillItem(index)"
-                              class="text-red-400 hover:text-red-300 font-bold p-1 cursor-pointer"
+                              class="text-red-400 hover:text-red-300 text-xs p-1 cursor-pointer transition-colors"
                               title="Delete Row"
                             >
                               🗑️
@@ -278,31 +289,31 @@ import Swal from 'sweetalert2';
                 </table>
               </div>
 
-              <!-- Add Row button -->
-              <div class="mt-4 pt-2 flex justify-start">
+              <!-- Quick Add Row button at bottom -->
+              <div class="pt-1 flex justify-start">
                 <button
                   type="button"
                   (click)="addBlankRow()"
-                  class="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm font-semibold text-orange-400 hover:text-orange-300 hover:bg-white/10 transition-all flex items-center gap-2 cursor-pointer font-sans"
+                  class="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs font-semibold text-orange-400 hover:text-orange-300 hover:bg-white/10 transition-all flex items-center gap-1.5 cursor-pointer font-sans"
                 >
-                  ➕ Add Row / Item
+                  <span>➕</span> Add Row / Item
                 </button>
               </div>
             </div>
           </div>
 
-          <!-- Checkout & Billing Options -->
-          <div class="bg-white/5 border border-white/5 rounded-2xl p-6 space-y-6">
-            <div class="flex items-center gap-2 border-b border-white/5 pb-3">
-              <span class="text-xl">💳</span>
-              <h3 class="text-lg font-bold text-white">Summary & Payment</h3>
+          <!-- Checkout & Billing Options (Right Panel 25%) -->
+          <div class="lg:col-span-1 bg-white/5 border border-white/5 rounded-xl p-3.5 space-y-3.5">
+            <div class="flex items-center gap-1.5 border-b border-white/5 pb-2">
+              <span class="text-base">💳</span>
+              <h3 class="text-sm font-bold text-white">Summary & Payment</h3>
             </div>
 
             <!-- Prices Summary -->
-            <div class="space-y-3 font-semibold text-sm">
+            <div class="space-y-2 font-semibold text-xs">
               <div class="flex items-center justify-between text-slate-400">
                 <span>Subtotal:</span>
-                <span class="text-white">₹{{ calculateSubtotal() | number:'1.2-2' }}</span>
+                <span class="text-white font-mono">₹{{ calculateSubtotal() | number:'1.2-2' }}</span>
               </div>
               
               <div class="space-y-1">
@@ -314,51 +325,51 @@ import Swal from 'sweetalert2';
                     [max]="calculateSubtotal()"
                     [(ngModel)]="billDiscount"
                     (ngModelChange)="onDiscountChange()"
-                    class="w-24 px-2 py-1 text-right bg-white/5 border border-white/10 rounded text-white text-xs focus:outline-none focus:border-orange-500"
+                    class="w-20 px-2 py-1 text-right bg-white/5 border border-white/10 rounded-lg text-white text-xs font-mono focus:outline-none focus:border-orange-500"
                   />
                 </div>
               </div>
 
-              <div class="flex items-center justify-between text-lg font-extrabold border-t border-white/5 pt-3">
+              <div class="flex items-center justify-between text-base font-extrabold border-t border-white/5 pt-2">
                 <span class="text-orange-400">Net Total:</span>
-                <span class="text-white">₹{{ calculateTotal() | number:'1.2-2' }}</span>
+                <span class="text-white font-mono">₹{{ calculateTotal() | number:'1.2-2' }}</span>
               </div>
             </div>
 
             <!-- Payment Options -->
-            <div class="space-y-4 pt-2">
+            <div class="space-y-3 pt-1">
               <div>
-                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Payment Method</label>
+                <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Payment Method</label>
                 <div class="relative">
                   <button
                     type="button"
                     (click)="showMethodDropdown.set(!showMethodDropdown())"
                     (blur)="hideMethodDropdownWithDelay()"
-                    class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-slate-200 text-left flex items-center justify-between focus:outline-none focus:border-orange-500 cursor-pointer"
+                    class="w-full bg-slate-900 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 text-left flex items-center justify-between focus:outline-none focus:border-orange-500 cursor-pointer"
                   >
                     <span>{{ getPaymentMethodLabel(paymentMethod) }}</span>
-                    <span class="text-xs text-slate-400">▼</span>
+                    <span class="text-[10px] text-slate-400">▼</span>
                   </button>
                   @if (showMethodDropdown()) {
-                    <div class="absolute left-0 right-0 z-30 mt-1 bg-slate-900 border border-white/10 rounded-xl shadow-2xl p-2 space-y-1">
+                    <div class="absolute left-0 right-0 z-30 mt-1 bg-slate-900 border border-white/10 rounded-xl shadow-2xl p-1.5 space-y-1">
                       <button
                         type="button"
                         (mousedown)="setPaymentMethod('cash')"
-                        class="w-full text-left px-3 py-2 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all cursor-pointer block font-sans"
+                        class="w-full text-left px-2.5 py-1.5 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all cursor-pointer block font-sans"
                       >
                         💵 Cash Payment
                       </button>
                       <button
                         type="button"
                         (mousedown)="setPaymentMethod('card')"
-                        class="w-full text-left px-3 py-2 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all cursor-pointer block font-sans"
+                        class="w-full text-left px-2.5 py-1.5 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all cursor-pointer block font-sans"
                       >
                         💳 Card Payment
                       </button>
                       <button
                         type="button"
                         (mousedown)="setPaymentMethod('upi')"
-                        class="w-full text-left px-3 py-2 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all cursor-pointer block font-sans"
+                        class="w-full text-left px-2.5 py-1.5 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all cursor-pointer block font-sans"
                       >
                         📱 UPI Payment
                       </button>
@@ -368,37 +379,37 @@ import Swal from 'sweetalert2';
               </div>
 
               <div>
-                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Payment Status</label>
+                <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Payment Status</label>
                 <div class="relative">
                   <button
                     type="button"
                     (click)="showStatusDropdown.set(!showStatusDropdown())"
                     (blur)="hideStatusDropdownWithDelay()"
-                    class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-slate-200 text-left flex items-center justify-between focus:outline-none focus:border-orange-500 cursor-pointer"
+                    class="w-full bg-slate-900 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 text-left flex items-center justify-between focus:outline-none focus:border-orange-500 cursor-pointer"
                   >
                     <span>{{ getPaymentStatusLabel(paymentStatus) }}</span>
-                    <span class="text-xs text-slate-400">▼</span>
+                    <span class="text-[10px] text-slate-400">▼</span>
                   </button>
                   @if (showStatusDropdown()) {
-                    <div class="absolute left-0 right-0 z-30 mt-1 bg-slate-900 border border-white/10 rounded-xl shadow-2xl p-2 space-y-1">
+                    <div class="absolute left-0 right-0 z-30 mt-1 bg-slate-900 border border-white/10 rounded-xl shadow-2xl p-1.5 space-y-1">
                       <button
                         type="button"
                         (mousedown)="setPaymentStatus('paid')"
-                        class="w-full text-left px-3 py-2 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all cursor-pointer block font-sans"
+                        class="w-full text-left px-2.5 py-1.5 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all cursor-pointer block font-sans"
                       >
                         ✅ Paid (Completed)
                       </button>
                       <button
                         type="button"
                         (mousedown)="setPaymentStatus('pending')"
-                        class="w-full text-left px-3 py-2 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all cursor-pointer block font-sans"
+                        class="w-full text-left px-2.5 py-1.5 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all cursor-pointer block font-sans"
                       >
                         ⏳ Pending (Draft)
                       </button>
                       <button
                         type="button"
                         (mousedown)="setPaymentStatus('partially_paid')"
-                        class="w-full text-left px-3 py-2 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all cursor-pointer block font-sans"
+                        class="w-full text-left px-2.5 py-1.5 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all cursor-pointer block font-sans"
                       >
                         💵 Partially Paid
                       </button>
@@ -409,21 +420,21 @@ import Swal from 'sweetalert2';
 
               <!-- Partially Paid Input Fields -->
               @if (paymentStatus === 'partially_paid') {
-                <div class="grid grid-cols-2 gap-4 pt-2">
+                <div class="grid grid-cols-2 gap-2 pt-1">
                   <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1 whitespace-nowrap">Paid Amount (₹)</label>
+                    <label class="block text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1 whitespace-nowrap">Paid (₹)</label>
                     <input
                       type="number"
                       min="0"
                       [max]="calculateTotal()"
                       [(ngModel)]="billPaidAmount"
                       (ngModelChange)="onPaidAmountChange()"
-                      class="w-full px-3 py-2.5 bg-slate-900 border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-orange-500"
+                      class="w-full px-2.5 py-1.5 bg-slate-900 border border-white/10 rounded-lg text-white text-xs font-mono focus:outline-none focus:border-orange-500"
                     />
                   </div>
                   <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1 whitespace-nowrap">Pending Amount (₹)</label>
-                    <div class="w-full px-3 py-2.5 bg-slate-900 border border-white/5 rounded-xl text-slate-400 text-xs font-mono select-none">
+                    <label class="block text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1 whitespace-nowrap">Pending (₹)</label>
+                    <div class="w-full px-2.5 py-1.5 bg-slate-900 border border-white/5 rounded-lg text-slate-400 text-xs font-mono select-none">
                       ₹{{ billPendingAmount | number:'1.2-2' }}
                     </div>
                   </div>
@@ -432,7 +443,7 @@ import Swal from 'sweetalert2';
             </div>
 
             @if (createError()) {
-              <div class="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl">
+              <div class="p-2.5 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-lg">
                 {{ createError() }}
               </div>
             }
@@ -440,7 +451,7 @@ import Swal from 'sweetalert2';
             <button
               (click)="submitBill()"
               [disabled]="!hasValidItems() || !billCustomer.phone || !billCustomer.name || phoneRef.invalid"
-              class="w-full py-4 bg-gradient-to-r from-orange-500 to-violet-600 text-white font-bold rounded-xl shadow-lg hover:from-orange-600 hover:to-violet-700 transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+              class="w-full py-3 bg-gradient-to-r from-orange-500 to-violet-600 text-white text-sm font-bold rounded-xl shadow-lg hover:from-orange-600 hover:to-violet-700 transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>🚀</span> Generate Invoice
             </button>
@@ -849,6 +860,22 @@ export class BillsComponent implements OnInit {
     }, 50);
   }
 
+  initBlankRows(count = 5): void {
+    const rows = [];
+    for (let i = 0; i < count; i++) {
+      rows.push({
+        productId: 0,
+        name: '',
+        unitPrice: 0,
+        quantity: 1,
+        maxStock: 0,
+        searchText: '',
+        showDropdown: false
+      });
+    }
+    this.billItems.set(rows);
+  }
+
   addBlankRow(autoFocus = true): void {
     const newItem = {
       productId: 0,
@@ -873,10 +900,16 @@ export class BillsComponent implements OnInit {
       .filter(bi => bi !== item && bi.productId > 0)
       .map(bi => bi.productId);
     const available = list.filter(p => !selectedIds.includes(p.id));
-    if (!query || (item.productId && query === item.name.toLowerCase().trim())) {
+    if (!query || (item.productId && (query === item.name.toLowerCase().trim() || query === item.productId.toString() || query === `#${item.productId}`))) {
       return available;
     }
-    return available.filter(p => p.name.toLowerCase().includes(query));
+    return available.filter(p => 
+      p.name.toLowerCase().includes(query) ||
+      p.id.toString().includes(query) ||
+      `#${p.id}`.includes(query) ||
+      (p.sku && p.sku.toLowerCase().includes(query)) ||
+      (p.code && p.code.toLowerCase().includes(query))
+    );
   }
 
   selectProductFromRow(index: number, prod: any): void {
@@ -1024,7 +1057,7 @@ export class BillsComponent implements OnInit {
         const list = Array.isArray(res) ? res : res.data || [];
         this.availableProducts.set(list.filter((p: any) => p.isActive));
         if (this.billItems().length === 0) {
-          this.addBlankRow(false);
+          this.initBlankRows(5);
         }
       }
     });
@@ -1205,8 +1238,7 @@ export class BillsComponent implements OnInit {
       next: (savedBill) => {
         // Reset form
         this.billCustomer = { name: '', phone: '', email: '', address: '', gstNumber: '' };
-        this.billItems.set([]);
-        this.addBlankRow();
+        this.initBlankRows(5);
         this.billDiscount = 0;
         this.paymentMethod = 'cash';
         this.paymentStatus = 'paid';

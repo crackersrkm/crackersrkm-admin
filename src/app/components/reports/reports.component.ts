@@ -8,49 +8,49 @@ import { BillService } from '../../services/bill.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="space-y-6 font-sans">
+    <div class="space-y-4 font-sans">
       
       <!-- Page Header -->
       <div>
-        <h2 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">Cumulative Sales Reports</h2>
-        <p class="text-slate-400 text-sm mt-1">Select date ranges to filter sales details and download Excel reports.</p>
+        <h2 class="text-xl md:text-2xl font-extrabold text-white tracking-tight">Cumulative Sales Reports</h2>
+        <p class="text-slate-400 text-xs mt-0.5">Select date ranges to filter sales details and download Excel reports.</p>
       </div>
 
       <!-- Filters & Actions Card -->
-      <div class="bg-white/5 border border-white/5 rounded-2xl p-6 space-y-4">
-        <div class="flex items-center gap-2 border-b border-white/5 pb-3">
-          <span class="text-xl">📅</span>
-          <h3 class="text-lg font-bold text-white">Filter Report Dates</h3>
+      <div class="bg-white/5 border border-white/5 rounded-xl p-3.5 space-y-2.5">
+        <div class="flex items-center gap-1.5 border-b border-white/5 pb-1.5">
+          <span class="text-base">📅</span>
+          <h3 class="text-sm font-bold text-white">Filter Report Dates</h3>
         </div>
 
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div class="flex flex-col sm:flex-row gap-4 w-full md:max-w-2xl">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-3">
+          <div class="flex flex-col sm:flex-row gap-3 w-full md:max-w-xl">
             <!-- Start Date -->
             <div class="flex-1">
-              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Start Date</label>
+              <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Start Date</label>
               <input
                 type="date"
                 [(ngModel)]="startDate"
-                class="w-full px-4 py-2.5 bg-slate-900 border border-white/10 rounded-xl text-white focus:outline-none focus:border-orange-500 font-sans"
+                class="w-full px-3 py-1.5 bg-slate-900 border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-orange-500 font-sans"
               />
             </div>
             <!-- End Date -->
             <div class="flex-1">
-              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">End Date</label>
+              <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">End Date</label>
               <input
                 type="date"
                 [(ngModel)]="endDate"
-                class="w-full px-4 py-2.5 bg-slate-900 border border-white/10 rounded-xl text-white focus:outline-none focus:border-orange-500 font-sans"
+                class="w-full px-3 py-1.5 bg-slate-900 border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-orange-500 font-sans"
               />
             </div>
           </div>
 
           <!-- Buttons Group -->
-          <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+          <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
             <!-- Filter Button -->
             <button
               (click)="filterReport()"
-              class="px-6 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold rounded-xl shadow-lg transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer text-sm font-sans"
+              class="px-4 py-1.5 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold rounded-lg shadow transition-all flex items-center justify-center gap-1.5 cursor-pointer text-xs font-sans"
             >
               🔍 Filter Report
             </button>
@@ -58,67 +58,67 @@ import { BillService } from '../../services/bill.service';
             <button
               (click)="exportToExcel()"
               [disabled]="!reportFiltered() || filteredBills().length === 0"
-              class="px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 disabled:opacity-40 disabled:from-slate-800 disabled:to-slate-800 text-white font-bold rounded-xl shadow-lg transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer text-sm font-sans"
+              class="px-4 py-1.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 disabled:opacity-40 disabled:from-slate-800 disabled:to-slate-800 text-white font-bold rounded-lg shadow transition-all flex items-center justify-center gap-1.5 cursor-pointer text-xs font-sans"
             >
-              <span>📥</span> Download Excel Report
+              <span>📥</span> Download Excel
             </button>
           </div>
         </div>
       </div>
 
       <!-- Summary Metrics Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <!-- Invoices Counter -->
-        <div class="bg-white/5 border border-white/5 rounded-2xl p-5 flex items-center gap-4">
-          <div class="w-12 h-12 bg-orange-500/10 border border-orange-500/20 rounded-xl flex items-center justify-center text-xl text-orange-400">
+        <div class="bg-white/5 border border-white/5 rounded-xl p-3.5 flex items-center gap-3">
+          <div class="w-9 h-9 bg-orange-500/10 border border-orange-500/20 rounded-lg flex items-center justify-center text-base text-orange-400 shrink-0">
             🧾
           </div>
           <div>
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Invoices Generated</p>
-            <p class="text-2xl font-extrabold text-white mt-0.5">{{ totalBillsCount() }}</p>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Invoices</p>
+            <p class="text-lg font-extrabold text-white mt-0.5">{{ totalBillsCount() }}</p>
           </div>
         </div>
 
         <!-- Cumulative Sales Amount -->
-        <div class="bg-white/5 border border-white/5 rounded-2xl p-5 flex items-center gap-4">
-          <div class="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center text-xl text-emerald-400">
+        <div class="bg-white/5 border border-white/5 rounded-xl p-3.5 flex items-center gap-3">
+          <div class="w-9 h-9 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center justify-center text-base text-emerald-400 shrink-0">
             💰
           </div>
           <div>
             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Gross Subtotal</p>
-            <p class="text-2xl font-extrabold text-white mt-0.5">₹{{ cumulativeSubtotal() | number:'1.2-2' }}</p>
+            <p class="text-lg font-extrabold text-white mt-0.5">₹{{ cumulativeSubtotal() | number:'1.2-2' }}</p>
           </div>
         </div>
 
         <!-- Total Discount Allowed -->
-        <div class="bg-white/5 border border-white/5 rounded-2xl p-5 flex items-center gap-4">
-          <div class="w-12 h-12 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center justify-center text-xl text-red-400">
+        <div class="bg-white/5 border border-white/5 rounded-xl p-3.5 flex items-center gap-3">
+          <div class="w-9 h-9 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center justify-center text-base text-red-400 shrink-0">
             🏷️
           </div>
           <div>
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Discounts</p>
-            <p class="text-2xl font-extrabold text-white mt-0.5">- ₹{{ cumulativeDiscount() | number:'1.2-2' }}</p>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Discounts</p>
+            <p class="text-lg font-extrabold text-white mt-0.5">- ₹{{ cumulativeDiscount() | number:'1.2-2' }}</p>
           </div>
         </div>
 
         <!-- Cumulative Revenue / Net Total -->
-        <div class="bg-white/5 border border-white/5 rounded-2xl p-5 flex items-center gap-4">
-          <div class="w-12 h-12 bg-violet-500/10 border border-violet-500/20 rounded-xl flex items-center justify-center text-xl text-violet-400">
+        <div class="bg-white/5 border border-white/5 rounded-xl p-3.5 flex items-center gap-3">
+          <div class="w-9 h-9 bg-violet-500/10 border border-violet-500/20 rounded-lg flex items-center justify-center text-base text-violet-400 shrink-0">
             ⚡
           </div>
           <div>
             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Net Revenue</p>
-            <p class="text-2xl font-extrabold text-white mt-0.5">₹{{ cumulativeTotal() | number:'1.2-2' }}</p>
+            <p class="text-lg font-extrabold text-white mt-0.5">₹{{ cumulativeTotal() | number:'1.2-2' }}</p>
           </div>
         </div>
       </div>
 
       <!-- Cumulative Bills Listing Table -->
-      <div class="bg-white/5 border border-white/5 rounded-2xl p-6 space-y-4">
-        <div class="flex items-center justify-between border-b border-white/5 pb-3">
-          <div class="flex items-center gap-2">
-            <span class="text-xl">📊</span>
-            <h3 class="text-lg font-bold text-white">Sales Transactions</h3>
+      <div class="bg-white/5 border border-white/5 rounded-xl p-3.5 space-y-2.5">
+        <div class="flex items-center justify-between border-b border-white/5 pb-2">
+          <div class="flex items-center gap-1.5">
+            <span class="text-base">📊</span>
+            <h3 class="text-sm font-bold text-white">Sales Transactions</h3>
           </div>
           <span class="text-xs text-slate-400 font-semibold">{{ filteredBills().length }} invoices found</span>
         </div>
@@ -126,52 +126,52 @@ import { BillService } from '../../services/bill.service';
         <div class="overflow-x-auto">
           <table class="w-full text-left">
             <thead>
-              <tr class="text-slate-400 text-xs font-semibold uppercase tracking-wider border-b border-white/10">
-                <th class="py-3 px-4">Bill No</th>
-                <th class="py-3 px-4">Date</th>
-                <th class="py-3 px-4">Customer Details</th>
-                <th class="py-3 px-4 text-center">Payment Method</th>
-                <th class="py-3 px-4 text-right">Subtotal</th>
-                <th class="py-3 px-4 text-right">Discount</th>
-                <th class="py-3 px-4 text-right">Net Total</th>
+              <tr class="text-slate-400 text-[11px] font-semibold uppercase tracking-wider border-b border-white/10 bg-white/[0.02]">
+                <th class="py-2 px-3">Bill No</th>
+                <th class="py-2 px-3">Date</th>
+                <th class="py-2 px-3">Customer Details</th>
+                <th class="py-2 px-3 text-center">Payment</th>
+                <th class="py-2 px-3 text-right">Subtotal</th>
+                <th class="py-2 px-3 text-right">Discount</th>
+                <th class="py-2 px-3 text-right">Net Total</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-white/5">
               @if (loading()) {
                 <tr>
-                  <td colspan="7" class="py-12 text-center text-slate-500 text-sm">
+                  <td colspan="7" class="py-8 text-center text-slate-500 text-xs">
                     Loading sales records...
                   </td>
                 </tr>
               } @else if (!reportFiltered()) {
                 <tr>
-                  <td colspan="7" class="py-12 text-center text-slate-500 text-sm">
+                  <td colspan="7" class="py-8 text-center text-slate-500 text-xs">
                     Please select a date range and click "Filter Report" to view sales transactions.
                   </td>
                 </tr>
               } @else if (filteredBills().length === 0) {
                 <tr>
-                  <td colspan="7" class="py-12 text-center text-slate-500 text-sm">
+                  <td colspan="7" class="py-8 text-center text-slate-500 text-xs">
                     No transactions generated inside the selected date range.
                   </td>
                 </tr>
               } @else {
                 @for (bill of filteredBills(); track bill.id) {
-                  <tr class="border-b border-white/5 text-slate-300 text-sm hover:bg-white/5 transition-colors">
-                    <td class="py-3.5 px-4 font-mono font-bold text-orange-400">{{ bill.billNumber }}</td>
-                    <td class="py-3.5 px-4">{{ bill.billDate | date:'mediumDate' }}</td>
-                    <td class="py-3.5 px-4">
-                      <div class="font-bold text-white">{{ bill.customer?.name || 'Anonymous' }}</div>
-                      <div class="text-[10px] text-slate-500 mt-0.5">📞 {{ bill.customer?.phone }}</div>
+                  <tr class="hover:bg-white/[0.03] transition-colors">
+                    <td class="py-2 px-3 font-mono font-bold text-xs text-orange-400">#{{ bill.billNumber }}</td>
+                    <td class="py-2 px-3 text-xs text-slate-300">{{ bill.billDate | date:'mediumDate' }}</td>
+                    <td class="py-2 px-3">
+                      <div class="font-bold text-xs text-white">{{ bill.customer?.name || 'Anonymous' }}</div>
+                      <div class="text-[10px] text-slate-500">📞 {{ bill.customer?.phone }}</div>
                     </td>
-                    <td class="py-3.5 px-4 text-center">
-                      <span class="inline-block px-2.5 py-1 text-[10px] font-bold rounded uppercase tracking-wider bg-white/5 border border-white/10">
+                    <td class="py-2 px-3 text-center">
+                      <span class="inline-block px-2 py-0.5 text-[9px] font-bold rounded uppercase tracking-wider bg-white/5 border border-white/10 text-slate-300">
                         {{ bill.paymentMethod }}
                       </span>
                     </td>
-                    <td class="py-3.5 px-4 text-right font-semibold">₹{{ bill.subtotal | number:'1.2-2' }}</td>
-                    <td class="py-3.5 px-4 text-right text-red-400 font-semibold">- ₹{{ bill.discount | number:'1.2-2' }}</td>
-                    <td class="py-3.5 px-4 text-right font-extrabold text-white">₹{{ bill.totalAmount | number:'1.2-2' }}</td>
+                    <td class="py-2 px-3 text-right text-xs font-mono font-semibold text-slate-200">₹{{ bill.subtotal | number:'1.2-2' }}</td>
+                    <td class="py-2 px-3 text-right text-xs font-mono text-red-400 font-semibold">- ₹{{ bill.discount | number:'1.2-2' }}</td>
+                    <td class="py-2 px-3 text-right text-xs font-mono font-extrabold text-white">₹{{ bill.totalAmount | number:'1.2-2' }}</td>
                   </tr>
                 }
               }
@@ -179,7 +179,6 @@ import { BillService } from '../../services/bill.service';
           </table>
         </div>
       </div>
-
     </div>
   `
 })

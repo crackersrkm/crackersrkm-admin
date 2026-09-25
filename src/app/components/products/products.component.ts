@@ -9,20 +9,20 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="space-y-6">
+    <div class="space-y-4">
       
       <!-- Top Title and Stats Grid -->
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h2 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">Products Catalog</h2>
-          <p class="text-slate-400 text-sm mt-1">Manage crackers inventory, pricing, and stock levels.</p>
+          <h2 class="text-xl md:text-2xl font-extrabold text-white tracking-tight">Products Catalog</h2>
+          <p class="text-slate-400 text-xs mt-0.5">Manage crackers inventory, pricing, and stock levels.</p>
         </div>
         
         <!-- Add Product Trigger (Admin Only) -->
         @if (authService.isAdmin()) {
           <button
             (click)="openAddModal()"
-            class="px-5 py-3 bg-gradient-to-r from-orange-500 to-violet-600 text-white font-bold rounded-xl shadow-lg hover:from-orange-600 hover:to-violet-700 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer flex items-center justify-center gap-2 self-start sm:self-auto"
+            class="px-3.5 py-2 bg-gradient-to-r from-orange-500 to-violet-600 text-white text-xs font-bold rounded-lg shadow-md hover:from-orange-600 hover:to-violet-700 transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 self-start sm:self-auto"
           >
             <span>➕</span> Add Product
           </button>
@@ -30,97 +30,97 @@ import { AuthService } from '../../services/auth.service';
       </div>
 
       <!-- Inventory Alert/Stats Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white/5 border border-white/5 rounded-2xl p-6 flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center text-xl">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div class="bg-white/5 border border-white/5 rounded-xl p-3.5 flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center text-base shrink-0">
             📦
           </div>
           <div>
-            <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Total Items</p>
-            <h3 class="text-2xl font-bold text-white mt-1">{{ totalProductsCount() }}</h3>
+            <p class="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">Total Items</p>
+            <h3 class="text-lg font-bold text-white mt-0.5">{{ totalProductsCount() }}</h3>
           </div>
         </div>
         
-        <div class="bg-white/5 border border-white/5 rounded-2xl p-6 flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl bg-yellow-500/20 text-yellow-400 flex items-center justify-center text-xl">
+        <div class="bg-white/5 border border-white/5 rounded-xl p-3.5 flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-yellow-500/20 text-yellow-400 flex items-center justify-center text-base shrink-0">
             ⚠️
           </div>
           <div>
-            <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Low Stock items</p>
-            <h3 class="text-2xl font-bold text-white mt-1">{{ lowStockCount() }}</h3>
+            <p class="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">Low Stock items</p>
+            <h3 class="text-lg font-bold text-white mt-0.5">{{ lowStockCount() }}</h3>
           </div>
         </div>
         
-        <div class="bg-white/5 border border-white/5 rounded-2xl p-6 flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center text-xl">
+        <div class="bg-white/5 border border-white/5 rounded-xl p-3.5 flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center text-base shrink-0">
             🚨
           </div>
           <div>
-            <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Out of Stock</p>
-            <h3 class="text-2xl font-bold text-white mt-1">{{ outOfStockCount() }}</h3>
+            <p class="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">Out of Stock</p>
+            <h3 class="text-lg font-bold text-white mt-0.5">{{ outOfStockCount() }}</h3>
           </div>
         </div>
       </div>
 
       <!-- Filters & Search Bar -->
-      <div class="bg-white/5 border border-white/5 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="bg-white/5 border border-white/5 rounded-xl p-2.5 flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div class="relative flex-1 max-w-md">
-          <span class="absolute left-4 top-3 text-slate-400">🔍</span>
+          <span class="absolute left-3 top-2 text-slate-400 text-xs">🔍</span>
           <input
             type="text"
-            placeholder="Search products by name..."
+            placeholder="Search products by name or ID..."
             [(ngModel)]="searchQuery"
             (input)="onSearch()"
-            class="w-full pl-11 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-orange-500 transition-all duration-300"
+            class="w-full pl-8 pr-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-orange-500 transition-all"
           />
         </div>
 
         <div class="flex items-center gap-2">
-          <span class="text-slate-400 text-xs font-semibold uppercase">Filter Stock Status:</span>
-          <div class="relative min-w-[150px]">
+          <span class="text-slate-400 text-[11px] font-semibold uppercase">Stock Filter:</span>
+          <div class="relative min-w-[140px]">
             <button
               type="button"
               (click)="showFilterDropdown.set(!showFilterDropdown())"
               (blur)="hideFilterDropdownWithDelay()"
-              class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-sm text-slate-300 text-left flex items-center justify-between focus:outline-none focus:border-orange-500 cursor-pointer font-sans"
+              class="w-full bg-slate-900 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 text-left flex items-center justify-between focus:outline-none focus:border-orange-500 cursor-pointer font-sans"
             >
               <span>{{ getStockFilterLabel(stockFilter) }}</span>
-              <span class="text-xs text-slate-400">▼</span>
+              <span class="text-[10px] text-slate-400">▼</span>
             </button>
             @if (showFilterDropdown()) {
-              <div class="absolute right-0 z-30 mt-1 w-44 bg-slate-900 border border-white/10 rounded-xl shadow-2xl p-2 space-y-1">
+              <div class="absolute right-0 z-30 mt-1 w-44 bg-slate-900 border border-white/10 rounded-xl shadow-2xl p-1.5 space-y-1">
                 <button
                   type="button"
                   (mousedown)="setStockFilter('all')"
-                  class="w-full text-left px-3 py-2 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all cursor-pointer block font-sans"
+                  class="w-full text-left px-2.5 py-1.5 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all cursor-pointer block font-sans"
                 >
                   All Inventory
                 </button>
                 <button
                   type="button"
                   (mousedown)="setStockFilter('instock')"
-                  class="w-full text-left px-3 py-2 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all cursor-pointer block font-sans"
+                  class="w-full text-left px-2.5 py-1.5 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all cursor-pointer block font-sans"
                 >
                   In Stock
                 </button>
                 <button
                   type="button"
                   (mousedown)="setStockFilter('low')"
-                  class="w-full text-left px-3 py-2 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all cursor-pointer block font-sans"
+                  class="w-full text-left px-2.5 py-1.5 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all cursor-pointer block font-sans"
                 >
                   Low Stock
                 </button>
                 <button
                   type="button"
                   (mousedown)="setStockFilter('out')"
-                  class="w-full text-left px-3 py-2 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all cursor-pointer block font-sans"
+                  class="w-full text-left px-2.5 py-1.5 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all cursor-pointer block font-sans"
                 >
                   Out of Stock
                 </button>
                 <button
                   type="button"
                   (mousedown)="setStockFilter('inactive')"
-                  class="w-full text-left px-3 py-2 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all cursor-pointer block font-sans"
+                  class="w-full text-left px-2.5 py-1.5 text-xs rounded-lg hover:bg-orange-500/20 hover:text-white transition-all cursor-pointer block font-sans"
                 >
                   Inactive
                 </button>
@@ -131,67 +131,67 @@ import { AuthService } from '../../services/auth.service';
       </div>
 
       <!-- Products Table View (Glassmorphism design) -->
-      <div class="bg-white/5 border border-white/5 rounded-2xl overflow-hidden shadow-xl">
+      <div class="bg-white/5 border border-white/5 rounded-xl overflow-hidden shadow-xl">
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="border-b border-white/10 bg-white/5 text-slate-400 text-xs font-bold uppercase tracking-wider">
-                <th class="py-4 px-6">Product ID</th>
-                <th class="py-4 px-6">Product Name</th>
-                <th class="py-4 px-6 text-right">Price (₹)</th>
-                <th class="py-4 px-6 text-center">Stock Level</th>
-                <th class="py-4 px-6 text-center">Status</th>
+              <tr class="border-b border-white/10 bg-white/5 text-slate-400 text-[11px] font-bold uppercase tracking-wider">
+                <th class="py-2.5 px-3.5">ID</th>
+                <th class="py-2.5 px-3.5">Product Name</th>
+                <th class="py-2.5 px-3.5 text-right">Price (₹)</th>
+                <th class="py-2.5 px-3.5 text-center">Stock Level</th>
+                <th class="py-2.5 px-3.5 text-center">Status</th>
                 @if (authService.isAdmin()) {
-                  <th class="py-4 px-6 text-center">Actions</th>
+                  <th class="py-2.5 px-3.5 text-center">Actions</th>
                 }
               </tr>
             </thead>
             <tbody class="divide-y divide-white/5">
               @if (loading()) {
                 <tr>
-                  <td colspan="6" class="py-12 text-center text-slate-400">
-                    <div class="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                  <td colspan="6" class="py-8 text-center text-slate-400 text-xs">
+                    <div class="w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
                     Loading product catalog...
                   </td>
                 </tr>
               } @else if (productsList().length === 0) {
                 <tr>
-                  <td colspan="6" class="py-12 text-center text-slate-400">
+                  <td colspan="6" class="py-8 text-center text-slate-400 text-xs">
                     No products found matching filters.
                   </td>
                 </tr>
               } @else {
                 @for (prod of productsList(); track prod.id) {
-                  <tr class="hover:bg-white/5 transition-colors duration-150">
-                    <td class="py-4 px-6 font-mono text-xs text-slate-400">{{ prod.id }}</td>
-                    <td class="py-4 px-6 font-semibold text-white">{{ prod.name }}</td>
-                    <td class="py-4 px-6 text-right font-semibold text-slate-200">₹{{ prod.price | number:'1.2-2' }}</td>
+                  <tr class="hover:bg-white/[0.03] transition-colors duration-150">
+                    <td class="py-2 px-3.5 font-mono text-xs text-orange-400 font-bold">#{{ prod.id }}</td>
+                    <td class="py-2 px-3.5 font-semibold text-xs text-white">{{ prod.name }}</td>
+                    <td class="py-2 px-3.5 text-right font-mono font-semibold text-xs text-slate-200">₹{{ prod.price | number:'1.2-2' }}</td>
                     
                     <!-- Stock Indicators -->
-                    <td class="py-4 px-6 text-center">
+                    <td class="py-2 px-3.5 text-center">
                       @if (prod.stockQuantity <= 0) {
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-red-500/10 text-red-400 border border-red-500/20">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-500/10 text-red-400 border border-red-500/20">
                           🔴 Out of Stock (0)
                         </span>
                       } @else if (prod.stockQuantity < 20) {
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
-                          🟡 Low Stock ({{ prod.stockQuantity }})
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+                          🟡 Low ({{ prod.stockQuantity }})
                         </span>
                       } @else {
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                           🟢 In Stock ({{ prod.stockQuantity }})
                         </span>
                       }
                     </td>
 
                     <!-- Status -->
-                    <td class="py-4 px-6 text-center">
+                    <td class="py-2 px-3.5 text-center">
                       @if (prod.isActive) {
-                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
                           Active
                         </span>
                       } @else {
-                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-500/20 text-slate-400 border border-slate-500/30">
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-500/20 text-slate-400 border border-slate-500/30">
                           Inactive
                         </span>
                       }
@@ -199,19 +199,19 @@ import { AuthService } from '../../services/auth.service';
 
                     <!-- Actions -->
                     @if (authService.isAdmin()) {
-                      <td class="py-4 px-6 text-center">
-                        <div class="flex items-center justify-center gap-2">
+                      <td class="py-2 px-3.5 text-center">
+                        <div class="flex items-center justify-center gap-1.5">
                           <button
                             (click)="openEditModal(prod)"
                             title="Edit Product"
-                            class="p-2 bg-white/5 border border-white/10 rounded-lg text-slate-300 hover:text-orange-400 hover:border-orange-500/30 transition-all duration-200 cursor-pointer"
+                            class="p-1 bg-white/5 border border-white/10 rounded text-xs text-slate-300 hover:text-orange-400 hover:border-orange-500/30 transition-all cursor-pointer"
                           >
                             ✏️
                           </button>
                           <button
                             (click)="toggleStatus(prod)"
                             [title]="prod.isActive ? 'Deactivate/Archive' : 'Activate'"
-                            class="p-2 bg-white/5 border border-white/10 rounded-lg text-slate-300 hover:text-violet-400 hover:border-violet-500/30 transition-all duration-200 cursor-pointer"
+                            class="p-1 bg-white/5 border border-white/10 rounded text-xs text-slate-300 hover:text-violet-400 hover:border-violet-500/30 transition-all cursor-pointer"
                           >
                             {{ prod.isActive ? '🛑' : '✅' }}
                           </button>
@@ -226,25 +226,25 @@ import { AuthService } from '../../services/auth.service';
         </div>
 
         <!-- Pagination controls footer -->
-        <div class="px-6 py-4 border-t border-white/5 flex items-center justify-between flex-wrap gap-4 bg-slate-900/40">
-          <div class="text-sm text-slate-400">
+        <div class="px-4 py-2.5 border-t border-white/5 flex items-center justify-between flex-wrap gap-3 bg-slate-900/40">
+          <div class="text-xs text-slate-400">
             {{ showingText() }}
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1.5">
             <button
               [disabled]="pageIndex() === 0"
               (click)="goToPage(pageIndex() - 1)"
-              class="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/10 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer font-sans"
+              class="px-2.5 py-1 bg-white/5 border border-white/10 rounded-lg text-xs text-slate-300 hover:text-white hover:bg-white/10 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer font-sans"
             >
               Previous
             </button>
-            <div class="text-xs text-slate-400 px-2 font-medium">
+            <div class="text-xs text-slate-400 px-1.5 font-medium">
               Page {{ pageIndex() + 1 }} of {{ totalPages() }}
             </div>
             <button
               [disabled]="pageIndex() + 1 >= totalPages()"
               (click)="goToPage(pageIndex() + 1)"
-              class="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/10 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer font-sans"
+              class="px-2.5 py-1 bg-white/5 border border-white/10 rounded-lg text-xs text-slate-300 hover:text-white hover:bg-white/10 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer font-sans"
             >
               Next
             </button>
