@@ -25,5 +25,20 @@ html, body, :host {
   font-family: 'Lexend', sans-serif !important;
 }
 
+@page {
+  size: A4 portrait;
+  margin: 8mm 10mm;
+}
 
+@media print {
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  aside, header, nav, button, select, input, .print\:hidden {
+    display: none !important;
+  }
+}
 

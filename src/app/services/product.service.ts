@@ -21,13 +21,19 @@ export class ProductService {
     });
   }
 
-  public getProducts(limit?: number, offset?: number): Observable<any> {
+  public getProducts(limit?: number, offset?: number, search?: string, stockFilter?: string): Observable<any> {
     let params = new HttpParams();
     if (limit !== undefined) {
       params = params.set('limit', limit.toString());
     }
     if (offset !== undefined) {
       params = params.set('offset', offset.toString());
+    }
+    if (search && search.trim()) {
+      params = params.set('search', search.trim());
+    }
+    if (stockFilter && stockFilter !== 'all') {
+      params = params.set('stockFilter', stockFilter);
     }
     return this.http.get<any>(this.apiUrl, { params });
   }

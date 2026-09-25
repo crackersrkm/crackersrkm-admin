@@ -154,16 +154,16 @@ import { AuthService } from '../../services/auth.service';
                     Loading product catalog...
                   </td>
                 </tr>
-              } @else if (filteredProducts().length === 0) {
+              } @else if (productsList().length === 0) {
                 <tr>
                   <td colspan="6" class="py-12 text-center text-slate-400">
                     No products found matching filters.
                   </td>
                 </tr>
               } @else {
-                @for (prod of paginatedProducts(); track prod.id) {
+                @for (prod of productsList(); track prod.id) {
                   <tr class="hover:bg-white/5 transition-colors duration-150">
-                    <td class="py-4 px-6 font-mono text-xs text-slate-400">#PROD{{ prod.id }}</td>
+                    <td class="py-4 px-6 font-mono text-xs text-slate-400">{{ prod.id }}</td>
                     <td class="py-4 px-6 font-semibold text-white">{{ prod.name }}</td>
                     <td class="py-4 px-6 text-right font-semibold text-slate-200">₹{{ prod.price | number:'1.2-2' }}</td>
                     
@@ -233,7 +233,7 @@ import { AuthService } from '../../services/auth.service';
           <div class="flex items-center gap-2">
             <button
               [disabled]="pageIndex() === 0"
-              (click)="pageIndex.set(pageIndex() - 1)"
+              (click)="goToPage(pageIndex() - 1)"
               class="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/10 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer font-sans"
             >
               Previous
@@ -243,7 +243,7 @@ import { AuthService } from '../../services/auth.service';
             </div>
             <button
               [disabled]="pageIndex() + 1 >= totalPages()"
-              (click)="pageIndex.set(pageIndex() + 1)"
+              (click)="goToPage(pageIndex() + 1)"
               class="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/10 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer font-sans"
             >
               Next
@@ -353,25 +353,19 @@ export class ProductsComponent implements OnInit {
 
   // Core component state signals
   productsList = signal<any[]>([]);
-  filteredProducts = signal<any[]>([]);
+  totalCount = signal<number>(0);
   loading = signal(false);
 
   // Pagination state signals
   pageIndex = signal<number>(0);
   pageSize = 10;
 
-  paginatedProducts = computed(() => {
-    const list = this.filteredProducts();
-    const start = this.pageIndex() * this.pageSize;
-    return list.slice(start, start + this.pageSize);
-  });
-
   totalPages = computed(() => {
-    return Math.ceil(this.filteredProducts().length / this.pageSize) || 1;
+    return Math.ceil(this.totalCount() / this.pageSize) || 1;
   });
 
   showingText = computed(() => {
-    const total = this.filteredProducts().length;
+    const total = this.totalCount();
     if (total === 0) return '0 products';
     const start = this.pageIndex() * this.pageSize + 1;
     const end = Math.min((this.pageIndex() + 1) * this.pageSize, total);
@@ -400,7 +394,8 @@ export class ProductsComponent implements OnInit {
   setStockFilter(val: string): void {
     this.stockFilter = val;
     this.showFilterDropdown.set(false);
-    this.onFilterChange();
+    this.pageIndex.set(0);
+    this.loadCatalog();
   }
 
   hideFilterDropdownWithDelay(): void {
@@ -428,13 +423,24 @@ export class ProductsComponent implements OnInit {
 
   loadCatalog(): void {
     this.loading.set(true);
-    // Request up to 100 products for billing catalog
-    this.productService.getProducts(100, 0).subscribe({
+    const offset = this.pageIndex() * this.pageSize;
+    this.productService.getProducts(this.pageSize, offset, this.searchQuery, this.stockFilter).subscribe({
       next: (res) => {
         const prods = Array.isArray(res) ? res : res.data || [];
+        const total = res.total !== undefined ? res.total : prods.length;
         this.productsList.set(prods);
-        this.calculateStats(prods);
-        this.applyFilters();
+        this.totalCount.set(total);
+        if (res.totalProductsCount !== undefined) {
+          this.totalProductsCount.set(res.totalProductsCount);
+        } else {
+          this.totalProductsCount.set(total);
+        }
+        if (res.lowStockCount !== undefined) {
+          this.lowStockCount.set(res.lowStockCount);
+        }
+        if (res.outOfStockCount !== undefined) {
+          this.outOfStockCount.set(res.outOfStockCount);
+        }
         this.loading.set(false);
       },
       error: () => {
@@ -443,42 +449,20 @@ export class ProductsComponent implements OnInit {
     });
   }
 
-  calculateStats(prods: any[]): void {
-    this.totalProductsCount.set(prods.length);
-    this.lowStockCount.set(prods.filter(p => p.stockQuantity > 0 && p.stockQuantity < 20).length);
-    this.outOfStockCount.set(prods.filter(p => p.stockQuantity <= 0).length);
-  }
-
-  applyFilters(): void {
-    let list = this.productsList();
-
-    // 1. Search Query filtering
-    if (this.searchQuery.trim()) {
-      const q = this.searchQuery.toLowerCase();
-      list = list.filter(p => p.name.toLowerCase().includes(q));
-    }
-
-    // 2. Dropdown filtering
-    if (this.stockFilter === 'instock') {
-      list = list.filter(p => p.stockQuantity >= 20 && p.isActive);
-    } else if (this.stockFilter === 'low') {
-      list = list.filter(p => p.stockQuantity > 0 && p.stockQuantity < 20 && p.isActive);
-    } else if (this.stockFilter === 'out') {
-      list = list.filter(p => p.stockQuantity <= 0 && p.isActive);
-    } else if (this.stockFilter === 'inactive') {
-      list = list.filter(p => !p.isActive);
-    }
-
-    this.filteredProducts.set(list);
-    this.pageIndex.set(0);
+  goToPage(idx: number): void {
+    if (idx < 0 || idx >= this.totalPages()) return;
+    this.pageIndex.set(idx);
+    this.loadCatalog();
   }
 
   onSearch(): void {
-    this.applyFilters();
+    this.pageIndex.set(0);
+    this.loadCatalog();
   }
 
   onFilterChange(): void {
-    this.applyFilters();
+    this.pageIndex.set(0);
+    this.loadCatalog();
   }
 
   // Modals management

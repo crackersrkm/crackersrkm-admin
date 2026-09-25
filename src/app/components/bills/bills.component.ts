@@ -10,9 +10,10 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="space-y-6">
-      
-      <!-- Top Title and Switcher -->
+    <div>
+      <div class="space-y-6 print:hidden">
+        
+        <!-- Top Title and Switcher -->
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">Billing & Invoices</h2>
@@ -121,10 +122,12 @@ import Swal from 'sweetalert2';
                 <div>
                   <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Customer Phone (10 digits)</label>
                   <input
+                    id="customer-phone"
                     type="text"
                     name="custPhone"
                     [(ngModel)]="billCustomer.phone"
                     (ngModelChange)="onPhoneChange($event)"
+                    (keydown.enter)="focusCustomerName($event)"
                     required
                     pattern="[6-9][0-9]{9}"
                     #phoneRef="ngModel"
@@ -139,9 +142,11 @@ import Swal from 'sweetalert2';
                 <div>
                   <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Customer Name</label>
                   <input
+                    id="customer-name"
                     type="text"
                     name="custName"
                     [(ngModel)]="billCustomer.name"
+                    (keydown.enter)="focusFirstItem($event)"
                     required
                     placeholder="John Doe"
                     class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-orange-500"
@@ -186,11 +191,13 @@ import Swal from 'sweetalert2';
                           <!-- Product Selection Search Field -->
                           <td class="py-3 px-4 relative">
                             <input
+                              [id]="'item-search-' + index"
                               type="text"
                               [(ngModel)]="item.searchText"
                               (focus)="item.showDropdown = true"
                               (blur)="hideDropdownWithDelay(index)"
                               (input)="onSearchInputChange(index)"
+                              (keydown.enter)="onSearchEnter(index, $event)"
                               placeholder="Search & select product..."
                               class="bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-orange-500 w-full max-w-[280px] font-sans"
                             />
@@ -229,9 +236,11 @@ import Swal from 'sweetalert2';
                                 -
                               </button>
                               <input
+                                [id]="'item-qty-' + index"
                                 type="number"
                                 [(ngModel)]="item.quantity"
                                 (change)="onRowQtyChange(index, item.quantity)"
+                                (keydown.enter)="onQtyEnter(index, $event)"
                                 [disabled]="item.productId === 0"
                                 class="font-mono text-sm w-12 text-center text-white bg-slate-950/40 border border-white/10 rounded py-0.5 focus:outline-none focus:border-orange-500"
                                 min="1"
@@ -438,15 +447,16 @@ import Swal from 'sweetalert2';
           </div>
         </div>
       }
+      </div>
 
       <!-- Invoice Details Overlay Modal (Print friendly layout) -->
       @if (selectedBill()) {
-        <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 print:p-0 print:static print:block print:bg-white print:m-0">
           <!-- Backdrop overlay -->
-          <div (click)="closeBillDetails()" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+          <div (click)="closeBillDetails()" class="absolute inset-0 bg-black/70 backdrop-blur-sm print:hidden"></div>
 
           <!-- Printable Wrapper -->
-          <div class="relative w-full max-w-2xl bg-white text-slate-900 rounded-2xl shadow-2xl overflow-hidden z-10 flex flex-col max-h-[90vh]">
+          <div class="relative w-full max-w-2xl bg-white text-slate-900 rounded-2xl shadow-2xl overflow-hidden z-10 flex flex-col max-h-[90vh] print:max-h-none print:overflow-visible print:max-w-none print:shadow-none print:rounded-none print:border-none print:w-full print:bg-white">
             
             <!-- Invoice Header actions (Non printable) -->
             <div class="flex items-center justify-between p-4 bg-slate-900 border-b border-white/10 text-white print:hidden">
@@ -468,52 +478,52 @@ import Swal from 'sweetalert2';
             </div>
 
             <!-- Actual Print Invoice Body -->
-            <div id="invoicePrintArea" class="p-8 flex-1 overflow-y-auto space-y-6">
+            <div id="invoicePrintArea" class="p-6 flex-1 overflow-y-auto space-y-3 print:p-0 print:overflow-visible print:space-y-2">
               
               <!-- Business Details & Branding -->
               <div class="flex justify-between items-start">
                 <div class="flex items-center gap-3">
-                  <img src="/rkm-badge.svg" alt="RKM Logo" class="w-12 h-12 object-contain" />
+                  <img src="/rkm-badge.svg" alt="RKM Logo" class="w-10 h-10 object-contain" />
                   <div>
-                    <h1 class="text-3xl font-black tracking-tight text-slate-900 uppercase">RKM CRACKERS</h1>
-                    <p class="text-xs text-slate-500 mt-1 font-bold">Sparkles of Joy, Safely Delivered</p>
-                    <p class="text-xs text-slate-400">Avudayanoor, Tenkasi, Tamil Nadu, India</p>
+                    <h1 class="text-2xl font-black tracking-tight text-slate-900 uppercase">RKM CRACKERS</h1>
+                    <p class="text-[11px] text-slate-500 mt-0.5 font-bold">Sparkles of Joy, Safely Delivered</p>
+                    <p class="text-[10px] text-slate-400">Avudayanoor, Tenkasi, Tamil Nadu, India</p>
                   </div>
                 </div>
                 <div class="text-right">
-                  <span class="inline-block px-3 py-1 bg-slate-100 text-slate-800 text-[10px] font-bold rounded uppercase tracking-wider">
+                  <span class="inline-block px-2.5 py-0.5 bg-slate-100 text-slate-800 text-[9px] font-bold rounded uppercase tracking-wider">
                     TAX INVOICE
                   </span>
-                  <p class="text-md font-mono text-slate-700 font-extrabold mt-2">No: {{ selectedBill().billNumber }}</p>
-                  <p class="text-xs text-slate-400 mt-1">Date: {{ selectedBill().billDate | date:'medium' }}</p>
+                  <p class="text-sm font-mono text-slate-700 font-extrabold mt-1">No: {{ selectedBill().billNumber }}</p>
+                  <p class="text-[10px] text-slate-400 mt-0.5">Date: {{ selectedBill().billDate | date:'medium' }}</p>
                 </div>
               </div>
 
-              <hr class="border-slate-200" />
+              <hr class="border-slate-200 my-1" />
 
               <!-- Client details -->
-              <div class="grid grid-cols-2 gap-4 text-xs">
+              <div class="grid grid-cols-2 gap-2 text-xs">
                 <div>
-                  <p class="text-slate-400 font-bold uppercase tracking-wide mb-1 text-[10px]">Billed To (Customer):</p>
-                  <p class="text-sm font-bold text-slate-800">{{ selectedBill().customer?.name }}</p>
-                  <p class="text-slate-600 mt-1">📞 {{ selectedBill().customer?.phone }}</p>
+                  <p class="text-slate-400 font-bold uppercase tracking-wide mb-0.5 text-[9px]">Billed To (Customer):</p>
+                  <p class="text-xs font-bold text-slate-800">{{ selectedBill().customer?.name }}</p>
+                  <p class="text-slate-600 text-[11px] mt-0.5">📞 {{ selectedBill().customer?.phone }}</p>
                   @if (selectedBill().customer?.email) {
-                    <p class="text-slate-600">✉️ {{ selectedBill().customer?.email }}</p>
+                    <p class="text-slate-600 text-[11px]">✉️ {{ selectedBill().customer?.email }}</p>
                   }
                   @if (selectedBill().customer?.address) {
-                    <p class="text-slate-500 mt-1 italic">📍 {{ selectedBill().customer?.address }}</p>
+                    <p class="text-slate-500 text-[10px] mt-0.5 italic">📍 {{ selectedBill().customer?.address }}</p>
                   }
                 </div>
                 <div class="text-right">
-                  <p class="text-slate-400 font-bold uppercase tracking-wide mb-1 text-[10px]">Payment Summary:</p>
-                  <p class="text-slate-600">Method: <strong class="uppercase text-slate-800">{{ selectedBill().paymentMethod }}</strong></p>
-                  <p class="text-slate-600 mt-1">Status: 
-                    <span class="px-2 py-0.5 bg-slate-100 text-slate-800 rounded font-extrabold uppercase text-[10px]">
+                  <p class="text-slate-400 font-bold uppercase tracking-wide mb-0.5 text-[9px]">Payment Summary:</p>
+                  <p class="text-slate-600 text-[11px]">Method: <strong class="uppercase text-slate-800">{{ selectedBill().paymentMethod }}</strong></p>
+                  <p class="text-slate-600 text-[11px] mt-0.5">Status: 
+                    <span class="px-2 py-0.5 bg-slate-100 text-slate-800 rounded font-extrabold uppercase text-[9px]">
                       {{ selectedBill().paymentStatus }}
                     </span>
                   </p>
                   @if (selectedBill().customer?.gstNumber) {
-                    <p class="text-slate-600 mt-2 font-mono">GSTIN: <strong>{{ selectedBill().customer?.gstNumber }}</strong></p>
+                    <p class="text-slate-600 text-[10px] mt-1 font-mono">GSTIN: <strong>{{ selectedBill().customer?.gstNumber }}</strong></p>
                   }
                 </div>
               </div>
@@ -522,36 +532,36 @@ import Swal from 'sweetalert2';
               <table class="w-full text-left text-xs border-collapse">
                 <thead>
                   <tr class="bg-slate-50 text-slate-600 font-bold uppercase border-b border-slate-200">
-                    <th class="py-2.5 px-3 text-center w-12">S.No.</th>
-                    <th class="py-2.5 px-3">Item Description</th>
-                    <th class="py-2.5 px-3 text-right">Unit Price (₹)</th>
-                    <th class="py-2.5 px-3 text-center">Quantity</th>
-                    <th class="py-2.5 px-3 text-right">Total (₹)</th>
+                    <th class="py-1.5 px-3 text-center w-12">S.No.</th>
+                    <th class="py-1.5 px-3">Item Description</th>
+                    <th class="py-1.5 px-3 text-right">Unit Price (₹)</th>
+                    <th class="py-1.5 px-3 text-center">Quantity</th>
+                    <th class="py-1.5 px-3 text-right">Total (₹)</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
+                <tbody>
                   @for (item of selectedBill().items; track item.id; let idx = $index) {
-                    <tr class="text-slate-700">
-                      <td class="py-3 px-3 text-center text-slate-500 font-semibold">{{ idx + 1 }}</td>
-                      <td class="py-3 px-3 font-semibold text-slate-800">{{ item.product?.name || 'Crackers Item' }}</td>
-                      <td class="py-3 px-3 text-right">₹{{ item.unitPrice | number:'1.2-2' }}</td>
-                      <td class="py-3 px-3 text-center">{{ item.quantity }}</td>
-                      <td class="py-3 px-3 text-right font-bold text-slate-900">₹{{ item.totalAmount | number:'1.2-2' }}</td>
+                    <tr class="text-slate-700 leading-tight">
+                      <td class="py-1 px-3 text-center text-slate-500 font-semibold">{{ idx + 1 }}</td>
+                      <td class="py-1 px-3 font-semibold text-slate-800">{{ item.product?.name || 'Crackers Item' }}</td>
+                      <td class="py-1 px-3 text-right">₹{{ item.unitPrice | number:'1.2-2' }}</td>
+                      <td class="py-1 px-3 text-center">{{ item.quantity }}</td>
+                      <td class="py-1 px-3 text-right font-bold text-slate-900">₹{{ item.totalAmount | number:'1.2-2' }}</td>
                     </tr>
                   }
                   <!-- Total row at the end of items table body -->
-                  <tr class="font-extrabold border-t border-slate-200 text-slate-900 bg-slate-50">
-                    <td colspan="2" class="py-2.5 px-3">Total:</td>
-                    <td class="py-2.5 px-3"></td>
-                    <td class="py-2.5 px-3 text-center">{{ calculateSelectedBillTotalQty() }}</td>
-                    <td class="py-2.5 px-3 text-right">₹{{ selectedBill().subtotal | number:'1.2-2' }}</td>
+                  <tr class="font-extrabold border-t border-slate-200 text-slate-900 bg-slate-50 leading-tight">
+                    <td colspan="2" class="py-1.5 px-3">Total:</td>
+                    <td class="py-1.5 px-3"></td>
+                    <td class="py-1.5 px-3 text-center">{{ calculateSelectedBillTotalQty() }}</td>
+                    <td class="py-1.5 px-3 text-right">₹{{ selectedBill().subtotal | number:'1.2-2' }}</td>
                   </tr>
                 </tbody>
               </table>
 
               <!-- Invoice Totals details -->
-              <div class="flex justify-end pt-4 border-t border-slate-200">
-                <div class="w-64 space-y-2 text-xs">
+              <div class="flex justify-end pt-2 border-t border-slate-200">
+                <div class="w-64 space-y-1 text-xs">
                   <div class="flex justify-between text-slate-500 font-semibold">
                     <span>Subtotal:</span>
                     <span class="text-slate-800 font-bold">₹{{ selectedBill().subtotal | number:'1.2-2' }}</span>
@@ -560,11 +570,11 @@ import Swal from 'sweetalert2';
                     <span>Discount:</span>
                     <span class="text-slate-800 font-bold">- ₹{{ selectedBill().discount | number:'1.2-2' }}</span>
                   </div>
-                  <div class="flex justify-between text-sm font-extrabold border-t border-slate-100 pt-2 text-slate-900">
+                  <div class="flex justify-between text-sm font-extrabold border-t border-slate-100 pt-1 text-slate-900">
                     <span>Grand Total:</span>
-                    <span class="text-lg">₹{{ selectedBill().totalAmount | number:'1.2-2' }}</span>
+                    <span class="text-base font-black">₹{{ selectedBill().totalAmount | number:'1.2-2' }}</span>
                   </div>
-                  <div class="flex justify-between text-xs text-slate-500 font-semibold border-t border-dashed border-slate-100 pt-2">
+                  <div class="flex justify-between text-xs text-slate-500 font-semibold border-t border-dashed border-slate-100 pt-1">
                     <span>Paid Amount:</span>
                     <span class="text-emerald-700 font-bold">₹{{ (selectedBill().paidAmount || 0) | number:'1.2-2' }}</span>
                   </div>
@@ -578,17 +588,17 @@ import Swal from 'sweetalert2';
               </div>
 
               <!-- Payment Details, History, and Record Payment -->
-              <div class="border-t border-slate-100 pt-6 space-y-4">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs bg-slate-50 p-4 rounded-xl">
+              <div class="border-t border-slate-100 pt-2 space-y-2">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs bg-slate-50 p-2.5 rounded-lg">
                   <div>
-                    <p class="text-slate-500 font-bold uppercase tracking-wide mb-2 text-[10px]">Payment Overview:</p>
-                    <p class="text-slate-700">Total Bill Amount: <strong class="text-slate-900">₹{{ selectedBill().totalAmount | number:'1.2-2' }}</strong></p>
-                    <p class="text-slate-700 mt-1">Paid Amount: <strong class="text-emerald-700">₹{{ (selectedBill().paidAmount || 0) | number:'1.2-2' }}</strong></p>
-                    <p class="text-slate-700 mt-1">Pending Amount: <strong class="text-red-700">₹{{ (selectedBill().pendingAmount || 0) | number:'1.2-2' }}</strong></p>
+                    <p class="text-slate-500 font-bold uppercase tracking-wide mb-1 text-[10px]">Payment Overview:</p>
+                    <p class="text-slate-700 leading-tight">Total Bill Amount: <strong class="text-slate-900">₹{{ selectedBill().totalAmount | number:'1.2-2' }}</strong></p>
+                    <p class="text-slate-700 leading-tight mt-0.5">Paid Amount: <strong class="text-emerald-700">₹{{ (selectedBill().paidAmount || 0) | number:'1.2-2' }}</strong></p>
+                    <p class="text-slate-700 leading-tight mt-0.5">Pending Amount: <strong class="text-red-700">₹{{ (selectedBill().pendingAmount || 0) | number:'1.2-2' }}</strong></p>
                   </div>
                   <div>
-                    <p class="text-slate-500 font-bold uppercase tracking-wide mb-2 text-[10px]">Status Details:</p>
-                    <p class="text-slate-700">Payment Status: 
+                    <p class="text-slate-500 font-bold uppercase tracking-wide mb-1 text-[10px]">Status Details:</p>
+                    <p class="text-slate-700 leading-tight">Payment Status: 
                       <span 
                         [class]="selectedBill().paymentStatus === 'paid' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : (selectedBill().paymentStatus === 'partially_paid' ? 'bg-orange-100 text-orange-800 border-orange-200' : 'bg-yellow-100 text-yellow-800 border-yellow-200')"
                         class="px-2 py-0.5 rounded border font-extrabold uppercase text-[10px]"
@@ -596,28 +606,28 @@ import Swal from 'sweetalert2';
                         {{ selectedBill().paymentStatus }}
                       </span>
                     </p>
-                    <p class="text-slate-700 mt-1">Payment Method: <strong class="uppercase text-slate-800">{{ selectedBill().paymentMethod }}</strong></p>
+                    <p class="text-slate-700 leading-tight mt-1">Payment Method: <strong class="uppercase text-slate-800">{{ selectedBill().paymentMethod }}</strong></p>
                   </div>
                 </div>
 
                 @if (selectedBill().payments && selectedBill().payments.length > 0) {
-                  <div class="space-y-2 text-xs">
+                  <div class="space-y-1.5 text-xs">
                     <p class="text-slate-500 font-bold uppercase tracking-wide text-[10px]">Payment Transactions History:</p>
                     <div class="border border-slate-200 rounded-lg overflow-hidden bg-white">
                       <table class="w-full text-left text-xs border-collapse">
                         <thead>
                           <tr class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200">
-                            <th class="py-1.5 px-3">Transaction Date</th>
-                            <th class="py-1.5 px-3">Method</th>
-                            <th class="py-1.5 px-3 text-right">Amount Received</th>
+                            <th class="py-1 px-3">Transaction Date</th>
+                            <th class="py-1 px-3">Method</th>
+                            <th class="py-1 px-3 text-right">Amount Received</th>
                           </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                           @for (p of selectedBill().payments; track p.id) {
-                            <tr class="text-slate-700">
-                              <td class="py-1.5 px-3 text-slate-500">{{ p.paymentDate | date:'medium' }}</td>
-                              <td class="py-1.5 px-3 uppercase font-semibold text-slate-800">{{ p.paymentMethod }}</td>
-                              <td class="py-1.5 px-3 text-right font-bold text-slate-900">₹{{ p.amountPaid | number:'1.2-2' }}</td>
+                            <tr class="text-slate-700 leading-tight">
+                              <td class="py-1 px-3 text-slate-500">{{ p.paymentDate | date:'medium' }}</td>
+                              <td class="py-1 px-3 uppercase font-semibold text-slate-800">{{ p.paymentMethod }}</td>
+                              <td class="py-1 px-3 text-right font-bold text-slate-900">₹{{ p.amountPaid | number:'1.2-2' }}</td>
                             </tr>
                           }
                         </tbody>
@@ -627,7 +637,7 @@ import Swal from 'sweetalert2';
                 }
 
                 @if (selectedBill().pendingAmount > 0) {
-                  <div class="bg-orange-50/60 border border-orange-200/50 p-4 rounded-xl space-y-3 print:hidden">
+                  <div class="bg-orange-50/60 border border-orange-200/50 p-3 rounded-xl space-y-2 print:hidden">
                     <div class="flex items-center gap-2">
                       <span class="text-base">💸</span>
                       <h4 class="text-xs font-extrabold text-orange-950 uppercase tracking-wider">Record Pending Balance Payment</h4>
@@ -670,9 +680,9 @@ import Swal from 'sweetalert2';
               </div>
 
               <!-- Footer notice -->
-              <div class="text-center text-[10px] text-slate-400 pt-3">
+              <div class="text-center text-[10px] text-slate-400 pt-1">
                 <p>Thank you for shopping with RKM Crackers! Have a safe and happy celebrations.</p>
-                <p class="mt-1">This is a system generated tax invoice. No signature required.</p>
+                <p class="mt-0.5">This is a system generated tax invoice. No signature required.</p>
               </div>
 
             </div>
@@ -684,50 +694,27 @@ import Swal from 'sweetalert2';
   `,
   styles: [`
     @media print {
-      /* Hide all dashboard structures, headers, sidebars, buttons, and tab switchers */
-      aside, header, nav, button, .inline-flex, select, input {
-        display: none !important;
-      }
-      /* Hide parent dashboard views when modal is active */
-      app-bills > div > div:not(.fixed) {
-        display: none !important;
-      }
-      /* Style modal overlay to fill the print canvas on a single page */
-      .fixed.inset-0 {
-        position: absolute !important;
-        inset: 0 !important;
-        background: white !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        z-index: 99999 !important;
+      :host {
         display: block !important;
       }
-      /* Remove limits on inner modal container box */
-      .fixed.inset-0 > div {
-        max-height: none !important;
-        width: 100% !important;
-        max-width: none !important;
-        border: none !important;
-        box-shadow: none !important;
-        background: white !important;
-        display: block !important;
-      }
-      /* Hide the modal header (which contains print/close buttons) */
-      .fixed.inset-0 > div > div:not(#invoicePrintArea) {
-        display: none !important;
-      }
-      /* Format invoice text & tables for high contrast print output */
       #invoicePrintArea {
         display: block !important;
-        padding: 20px !important;
-        margin: 0 !important;
-        background: white !important;
+        background: #ffffff !important;
         color: #000000 !important;
         width: 100% !important;
-        height: auto !important;
       }
       #invoicePrintArea * {
         color: #000000 !important;
+      }
+      #invoicePrintArea table tbody tr td {
+        padding-top: 1px !important;
+        padding-bottom: 1px !important;
+        line-height: 1.1 !important;
+        border: none !important;
+      }
+      #invoicePrintArea table thead tr th {
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
       }
     }
   `]
@@ -832,7 +819,37 @@ export class BillsComponent implements OnInit {
     return this.billItems().some(item => item.productId > 0 && item.quantity > 0);
   });
 
-  addBlankRow(): void {
+  focusCustomerName(e: Event): void {
+    e.preventDefault();
+    const el = document.getElementById('customer-name') as HTMLInputElement;
+    if (el) el.focus();
+  }
+
+  focusFirstItem(e: Event): void {
+    e.preventDefault();
+    this.focusSearchInput(0);
+  }
+
+  focusSearchInput(index: number): void {
+    setTimeout(() => {
+      const el = document.getElementById(`item-search-${index}`) as HTMLInputElement;
+      if (el) {
+        el.focus();
+      }
+    }, 50);
+  }
+
+  focusQtyInput(index: number): void {
+    setTimeout(() => {
+      const el = document.getElementById(`item-qty-${index}`) as HTMLInputElement;
+      if (el) {
+        el.focus();
+        el.select();
+      }
+    }, 50);
+  }
+
+  addBlankRow(autoFocus = true): void {
     const newItem = {
       productId: 0,
       name: '',
@@ -843,6 +860,10 @@ export class BillsComponent implements OnInit {
       showDropdown: false
     };
     this.billItems.update(items => [...items, newItem]);
+    if (autoFocus) {
+      const nextIndex = this.billItems().length - 1;
+      this.focusSearchInput(nextIndex);
+    }
   }
 
   getFilteredProducts(item: any): any[] {
@@ -876,6 +897,37 @@ export class BillsComponent implements OnInit {
     };
     this.billItems.set(items);
     this.recalculatePartialAmounts();
+    this.focusQtyInput(index);
+  }
+
+  onSearchEnter(index: number, event: Event): void {
+    event.preventDefault();
+    const item = this.billItems()[index];
+    if (!item) return;
+
+    if (item.productId === 0) {
+      const filtered = this.getFilteredProducts(item);
+      if (filtered.length > 0) {
+        this.selectProductFromRow(index, filtered[0]);
+      }
+    } else {
+      this.focusQtyInput(index);
+    }
+  }
+
+  onQtyEnter(index: number, event: Event): void {
+    event.preventDefault();
+    const items = this.billItems();
+    const item = items[index];
+    if (!item) return;
+
+    this.onRowQtyChange(index, item.quantity);
+
+    if (index + 1 < items.length) {
+      this.focusSearchInput(index + 1);
+    } else {
+      this.addBlankRow(true);
+    }
   }
 
   onSearchInputChange(index: number): void {
@@ -966,13 +1018,13 @@ export class BillsComponent implements OnInit {
   }
 
   loadProductsCatalog(): void {
-    // Load products for POS catalog lookup (only active products)
-    this.productService.getProducts(100, 0).subscribe({
+    // Load all active products for POS catalog lookup
+    this.productService.getProducts(1000, 0).subscribe({
       next: (res) => {
         const list = Array.isArray(res) ? res : res.data || [];
         this.availableProducts.set(list.filter((p: any) => p.isActive));
         if (this.billItems().length === 0) {
-          this.addBlankRow();
+          this.addBlankRow(false);
         }
       }
     });
